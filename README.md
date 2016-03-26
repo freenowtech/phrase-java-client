@@ -1,4 +1,5 @@
-# Phrase-API Wrapper
+# Phrase-Java-Client 
+[![Build Status](https://travis-ci.org/mytaxi/phrase-java-client.svg?branch=master)](https://travis-ci.org/mytaxi/phrase-java-client)
 
 ## What is this?
 This projects contains of services to handle the translations from [PhraseApp API v2](http://docs.phraseapp.com/api/v2/).
