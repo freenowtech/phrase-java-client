@@ -27,7 +27,7 @@ public class DefaultLocaleAPITest
     @Before
     public void beforeTest()
     {
-        cfg = ConfigFactory.create(TestConfig.class);
+        cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
         restTemplate = Mockito.mock(RestTemplate.class);
     }
 

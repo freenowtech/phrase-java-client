@@ -42,7 +42,7 @@ public class DefaultPhraseTranslationAPITest
     public void beforeTest()
     {
 
-        cfg = ConfigFactory.create(TestConfig.class);
+        cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
         restTemplate = Mockito.mock(RestTemplate.class);
         String authTokenMock = "authMockTockenString";
         translationAPI = new DefaultPhraseTranslationAPI(restTemplate, authTokenMock);

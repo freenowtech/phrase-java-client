@@ -18,7 +18,7 @@ public class DefaultLocaleDownloadAPITest
     @Before
     public void beforeTest()
     {
-        cfg = ConfigFactory.create(TestConfig.class);
+        cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
     }
 
     // TODO: create tests for downloadLocale
