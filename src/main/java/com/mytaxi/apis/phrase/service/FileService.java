@@ -1,6 +1,6 @@
 package com.mytaxi.apis.phrase.service;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,16 +21,17 @@ public class FileService
     private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
 
     private static final String MESSAGE_FILE_PREFIX = "messages_";
-    private String messageFilePrefix = null;
     private static final String MESSAGE_FILE_POSTFIX = ".properties";
+    private static final String GENERATED_RESOURCES_FOLDERNAME = "generated-resources/";
+    private static final String MESSAGES_FOLDERNAME = "messages/";
+
+    private String messageFilePrefix = null;
     private String messageFilePostfix = null;
-    private final String GENERATED_RESOURCES_FOLDERNAME = "generated-resources/";
     private String generatedResourcesFoldername = null;
-    private final String MESSAGES_FOLDERNAME = "messages/";
     private String messagesFoldername = null;
     private File messagesDirectory;
 
-    private final String projectIdPlaceholder = "{projectid}";
+    private static final String PROJECT_ID_PLACEHOLDER = "{projectid}";
 
 
     public FileService()
@@ -104,7 +105,7 @@ public class FileService
 
     private void initMessageDirectory()
     {
-        messagesDirectory = new File(Objects.firstNonNull(generatedResourcesFoldername, GENERATED_RESOURCES_FOLDERNAME));
+        messagesDirectory = new File(MoreObjects.firstNonNull(generatedResourcesFoldername, GENERATED_RESOURCES_FOLDERNAME));
         if (!messagesDirectory.exists())
         {
             messagesDirectory.mkdirs();
@@ -148,17 +149,17 @@ public class FileService
 
     private String createMessagesFoldername(final String projectId)
     {
-        final StringBuilder builder = new StringBuilder(Objects.firstNonNull(messagesFoldername, MESSAGES_FOLDERNAME));
-        return builder.toString().replace(projectIdPlaceholder, projectId);
+        final StringBuilder builder = new StringBuilder(MoreObjects.firstNonNull(messagesFoldername, MESSAGES_FOLDERNAME));
+        return builder.toString().replace(PROJECT_ID_PLACEHOLDER, projectId);
     }
 
 
     private String createFileName(final String code)
     {
         final StringBuilder builder = new StringBuilder();
-        builder.append(Objects.firstNonNull(messageFilePrefix, MESSAGE_FILE_PREFIX));
+        builder.append(MoreObjects.firstNonNull(messageFilePrefix, MESSAGE_FILE_PREFIX));
         builder.append(code);
-        builder.append(Objects.firstNonNull(messageFilePostfix, MESSAGE_FILE_POSTFIX));
+        builder.append(MoreObjects.firstNonNull(messageFilePostfix, MESSAGE_FILE_POSTFIX));
         return builder.toString();
     }
 
