@@ -59,5 +59,14 @@ projectId=<projectId>
 localeIdDe=<localeIdDe>
 ```
 
+### Deploy to OSS Sonatype
+```
+export authToken=<authToken>
+export projectId=<projectId>
+export localeIdDe=<localeIdDe>
+mvn release:prepare -P release
+mvn release:perform -P release
+```
+
 ## TODOs
 - add tests for main functionality of the services localedownload, translation
