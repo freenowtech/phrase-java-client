@@ -4,7 +4,7 @@
 
     <groupId>com.mytaxi.apis</groupId>
     <artifactId>phrase-java-client</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <name>phrase-api</name>
     <description>This projects contains of services to handle the translations from [PhraseApp API
         v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.</description>
@@ -33,11 +33,11 @@
 
     <distributionManagement>
         <repository>
-            <id>sonatype-nexus-staging</id>
+            <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
+            <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
@@ -207,10 +207,9 @@
                         <version>1.6.3</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>sonatype-nexus-staging</serverId>
+                            <serverId>ossrh</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                            <stagingProfileId>71761355695ff</stagingProfileId>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -244,4 +243,18 @@
         </profile>
     </profiles>
 
+    <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </pluginManagement>
 </project>
