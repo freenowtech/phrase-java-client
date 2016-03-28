@@ -7,11 +7,13 @@ import org.aeonbits.owner.Config;
  */
 public interface TestConfig extends Config
 {
-    @DefaultValue("${authToken}")
+    @DefaultValue("${ENV_PHRASE_AUTHTOKEN}")
     String authToken();
-    @DefaultValue("${projectId}")
+
+    @DefaultValue("${ENV_PHRASE_PROJECTID}")
     String projectId();
-    @DefaultValue("${localeIdDe}")
+
+    @DefaultValue("${ENV_PHRASE_LOCALEID_DE}")
     String localeIdDe();
 
 }
