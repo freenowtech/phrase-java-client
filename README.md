@@ -18,7 +18,7 @@ Please install this dependency to your local repository and include the followin
 <dependency>
     <groupId>com.mytaxi.apis</groupId>
     <artifactId>phrase-java-client</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
