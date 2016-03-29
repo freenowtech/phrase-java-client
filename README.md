@@ -1,6 +1,6 @@
 # Phrase-Java-Client 
 [![Build Status](https://travis-ci.org/mytaxi/phrase-java-client.svg?branch=master)](https://travis-ci.org/mytaxi/phrase-java-client)
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.mytaxi.apis/phrase-java-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.mytaxi.apis/phrase-java-client)
 ## What is this?
 This projects contains of services to handle the translations from [PhraseApp API v2](http://docs.phraseapp.com/api/v2/).
 It's supposed to expose Phrase translations as POJO or as File within the java world.
