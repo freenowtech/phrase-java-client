@@ -98,6 +98,12 @@ public class PhraseAppSyncTask implements Runnable
     }
 
 
+    List<PhraseProjectLocale> getPhraseLocales()
+    {
+        return phraseLocales;
+    }
+
+
     private List<PhraseLocale> getLocales(final String projectId)
     {
         final Collection<PhraseProjectLocale> phrasesProjectLocales = Collections2.filter(phraseLocales, new Predicate<PhraseProjectLocale>()
