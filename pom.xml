@@ -44,8 +44,8 @@
     </distributionManagement>
 
     <properties>
-        <jackson.version>2.7.3</jackson.version>
-        <javaVersion>1.6</javaVersion>
+        <jackson.version>[2.7.0,2.8.0)</jackson.version>
+        <javaVersion>1.7</javaVersion>
         <mavenVersion>2.0.9</mavenVersion>
         <scm.connection>scm:git:git@github.com:mytaxi/phrase-java-client.git</scm.connection>
         <scm.url>https://github.com/mytaxi/phrase-java-client</scm.url>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.19</version>
+            <version>1.7.18</version>
         </dependency>
 
         <!-- HTTP Functions(Builder, ...) -->
