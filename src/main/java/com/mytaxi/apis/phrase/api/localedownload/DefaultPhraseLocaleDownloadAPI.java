@@ -2,6 +2,8 @@ package com.mytaxi.apis.phrase.api.localedownload;
 
 import com.google.common.base.Preconditions;
 import com.mytaxi.apis.phrase.api.GenericPhraseAPI;
+import com.mytaxi.apis.phrase.api.format.Format;
+import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class DefaultPhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]> imp
 
     private static final String PHRASE_LOCALES_DOWNLOAD_PATH = "/api/v2/projects/{projectid}/locales/{localeid}/download";
 
-    private static final String DEFAULT_FILE_FORMAT = "properties";
+    private static final Format DEFAULT_FILE_FORMAT = JavaPropertiesFormat.newBuilder().build();
 
 
     protected DefaultPhraseLocaleDownloadAPI(final RestTemplate restTemplate, final String authToken)
@@ -57,9 +59,10 @@ public class DefaultPhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]> imp
 
 
     @Override
-    public byte[] downloadLocale(final String projectId, final String localeId, final String fileFormat)
+    public byte[] downloadLocale(final String projectId, final String localeId, final Format format)
     {
         Preconditions.checkNotNull(projectId, "ProjectIds may not be null.");
+        Preconditions.checkNotNull(format, "format may not be null.");
 
         LOG.trace("Start to retrieve locales for projectId: {}", projectId);
 
@@ -70,7 +73,8 @@ public class DefaultPhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]> imp
             LOG.trace("Call requestPath: {} to get locales from phrase.", requestPath);
 
             final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair(PLACEHOLDER_FILEFORMAT, fileFormat));
+            parameters.add(new BasicNameValuePair(PLACEHOLDER_FILEFORMAT, format.getName()));
+            parameters.addAll(format.getOptions());
 
             final URIBuilder builder = createUriBuilder(requestPath, parameters);
 
