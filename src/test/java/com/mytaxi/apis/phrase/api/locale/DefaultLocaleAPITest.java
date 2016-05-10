@@ -1,16 +1,19 @@
 package com.mytaxi.apis.phrase.api.locale;
 
-import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.config.TestConfig;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.web.client.RestTemplate;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Created by m.winkelmann on 30.10.15.
@@ -29,6 +32,8 @@ public class DefaultLocaleAPITest
     {
         cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
         restTemplate = Mockito.mock(RestTemplate.class);
+
+        assertNotNull(cfg.authToken());
     }
 
     // TODO: create tests for listLocales
@@ -44,21 +49,30 @@ public class DefaultLocaleAPITest
         String projectId = cfg.projectId();
 
         // WHEN
-        List<PhraseProjectLocale> phraseProjectLocales = phraseAppApiV2.listLocales(Arrays.asList(projectId));
+        List<PhraseProjectLocale> phraseProjectLocales = phraseAppApiV2.listLocales(Collections.singletonList(projectId));
 
         // THEN
         for (PhraseProjectLocale projectLocale : phraseProjectLocales)
         {
             List<PhraseLocale> locales = projectLocale.getLocales();
-            Assert.assertTrue("2 Expected locals not responded", locales.size() == 2);
-            PhraseLocale localeDe = locales.get(0);
-            Assert.assertEquals("Code of DE locale not expected", localeDe.getCode(), "de");
-            Assert.assertEquals("Name of DE locale not expected", localeDe.getName(), "de");
+            assertTrue(locales.size() >= 2);
 
-            PhraseLocale localeEn = locales.get(1);
-            Assert.assertEquals("Code of EN locale not expected", localeEn.getCode(), "en");
-            Assert.assertEquals("Name of EN locale not expected", localeEn.getName(), "en");
+            assertContainsPhraseLocaleCode(locales, "de");
+            assertContainsPhraseLocaleCode(locales, "en");
         }
+    }
+
+    private void assertContainsPhraseLocaleCode(List<PhraseLocale> locales, String phraseLocaleCode)
+    {
+        for (PhraseLocale locale : locales)
+        {
+            if(locale.getCode().equals(phraseLocaleCode))
+            {
+                return;
+            }
+        }
+
+        fail("locale with code: " + phraseLocaleCode + " not found in list: " + locales);
     }
 
     // TODO - create test for etag functionality
