@@ -11,8 +11,8 @@ import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
 import com.mytaxi.apis.phrase.service.FileService;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class PhraseAppSyncTask implements Runnable
     public PhraseAppSyncTask(final String authToken, final String projectId)
     {
         // TODO - support for more projectIds but we need to think about how we want to save the message files
-        projectIds = Arrays.asList(projectId);
+        projectIds = Collections.singletonList(projectId);
         localeAPI = new DefaultPhraseLocaleAPI(authToken);
         localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken);
         projectIdString = Joiner.on(",").join(projectIds);
@@ -53,7 +53,7 @@ public class PhraseAppSyncTask implements Runnable
     {
         Preconditions.checkNotNull(authToken);
         Preconditions.checkNotNull(projectId);
-        this.projectIds = Arrays.asList(projectId);
+        this.projectIds = Collections.singletonList(projectId);
         this.localeAPI = localeApi;
         this.localeDownloadAPI = localeDownloadAPI;
         this.projectIdString = Joiner.on(",").join(projectIds);
@@ -82,7 +82,7 @@ public class PhraseAppSyncTask implements Runnable
                         if (translationByteArray == null || translationByteArray.length == 0)
                         {
                             LOG.warn("Could not receive any data from PhraseAppApi for locale: {}. Please check configuration in PhraseApp!", locale);
-                            translationByteArray = new String("no.data.received=true").getBytes();
+                            translationByteArray = "no.data.received=true".getBytes();
                         }
                         fileService.saveToFile(projectId, translationByteArray, locale.getCode().replace('-', '_'));
                     }
