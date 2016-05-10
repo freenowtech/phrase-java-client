@@ -36,7 +36,7 @@ public class DefaultPhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]> imp
 
     private static final String PHRASE_LOCALES_DOWNLOAD_PATH = "/api/v2/projects/{projectid}/locales/{localeid}/download";
 
-    private static final Format DEFAULT_FILE_FORMAT = JavaPropertiesFormat.newBuilder().build();
+    public static final Format DEFAULT_FILE_FORMAT = JavaPropertiesFormat.newBuilder().build();
 
 
     protected DefaultPhraseLocaleDownloadAPI(final RestTemplate restTemplate, final String authToken)

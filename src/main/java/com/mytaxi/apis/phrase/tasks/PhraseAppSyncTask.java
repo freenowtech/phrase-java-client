@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.locale.DefaultPhraseLocaleAPI;
 import com.mytaxi.apis.phrase.api.locale.PhraseLocaleAPI;
 import com.mytaxi.apis.phrase.api.localedownload.DefaultPhraseLocaleDownloadAPI;
@@ -16,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.mytaxi.apis.phrase.api.localedownload.DefaultPhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
 
 /**
  * Created by m.winkelmann on 04.11.15.
@@ -35,6 +38,9 @@ public class PhraseAppSyncTask implements Runnable
 
     // logging
     private final String projectIdString;
+
+    //
+    private Format format = DEFAULT_FILE_FORMAT;
 
 
     public PhraseAppSyncTask(final String authToken, final String projectId)
@@ -78,7 +84,7 @@ public class PhraseAppSyncTask implements Runnable
                 {
                     for (final PhraseLocale locale : locales)
                     {
-                        byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, locale.getId());
+                        byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, locale.getId(), format);
                         if (translationByteArray == null || translationByteArray.length == 0)
                         {
                             LOG.warn("Could not receive any data from PhraseAppApi for locale: {}. Please check configuration in PhraseApp!", locale);
@@ -170,5 +176,11 @@ public class PhraseAppSyncTask implements Runnable
     public void setMessageFilePrefix(final String messageFilePrefix)
     {
         fileService.setMessageFilePrefix(messageFilePrefix);
+    }
+
+
+    public void setFormat(Format format)
+    {
+        this.format = format;
     }
 }

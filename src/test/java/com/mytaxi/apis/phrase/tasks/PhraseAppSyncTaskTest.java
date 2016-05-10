@@ -1,5 +1,8 @@
 package com.mytaxi.apis.phrase.tasks;
 
+import com.google.common.collect.ImmutableList;
+import com.mytaxi.apis.phrase.api.format.Format;
+import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
@@ -30,15 +33,47 @@ public class PhraseAppSyncTaskTest
 
 
     @Test
-    public void testRun() throws Exception
+    public void testJavaPropertiesFormat_escapeSingleQuotesTrue() throws Exception
+    {
+        JavaPropertiesFormat format = JavaPropertiesFormat.newBuilder()
+            .setEscapeSingleQuotes(true)
+            .build();
+
+        List<ExpectedEntry> expectedEntries = ImmutableList.of(
+            new ExpectedEntry("ca", "incentiveservice.incentive.pricing.description", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
+            new ExpectedEntry("en", "SERVER_ABORT", "Unfortunately, we haven''t found a taxi for you.") // check Double apostrophe
+        );
+
+        testRun(format, expectedEntries);
+    }
+
+
+    @Test
+    public void testJavaPropertiesFormat_escapeSingleQuotesFalse() throws Exception
+    {
+        JavaPropertiesFormat format = JavaPropertiesFormat.newBuilder()
+            .setEscapeSingleQuotes(false)
+            .build();
+
+        List<ExpectedEntry> expectedEntries = ImmutableList.of(
+            new ExpectedEntry("ca", "incentiveservice.incentive.pricing.description", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
+            new ExpectedEntry("en", "SERVER_ABORT", "Unfortunately, we haven't found a taxi for you.") // check Double apostrophe
+        );
+
+        testRun(format, expectedEntries);
+    }
+
+
+    private void testRun(Format format, List<ExpectedEntry> expectedEntries) throws Exception
     {
 
-        //
+        // use unique folder name to start from scratch in each run
         String uuid = UUID.randomUUID().toString();
 
         //
         PhraseAppSyncTask phraseAppSyncTask = new PhraseAppSyncTask(cfg.authToken(), cfg.projectId());
         phraseAppSyncTask.setMessagesFoldername(uuid);
+        phraseAppSyncTask.setFormat(format);
         phraseAppSyncTask.run();
 
         // assert we found some locales
@@ -49,7 +84,7 @@ public class PhraseAppSyncTaskTest
         List<PhraseLocale> phraseLocales = phraseProjectLocale.getLocales();
         assertTrue(phraseLocales.size() >= 11);
 
-        //
+        // check some files
         File folder = new File("./target/test-classes/" + uuid);
         assertTrue(folder.canRead());
 
@@ -67,31 +102,39 @@ public class PhraseAppSyncTaskTest
 
                 assertFalse(properties.isEmpty());
 
-                checkSome(phraseLocale, properties);
+                checkSome(phraseLocale, properties, expectedEntries);
             }
-
         }
 
     }
 
 
-    private void checkSome(PhraseLocale phraseLocale, Properties properties)
+    private void checkSome(PhraseLocale phraseLocale, Properties properties, List<ExpectedEntry> expectedEntries)
     {
-
-        // some arbitrary test
-        if (phraseLocale.getCode().equals("ca"))
+        for (ExpectedEntry expectedEntry : expectedEntries)
         {
-            String translation = properties.getProperty("incentiveservice.incentive.pricing.description");
-            assertEquals("Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}", translation);
+            if (phraseLocale.getCode().equals(expectedEntry.phraseLocaleCode))
+            {
+                String translation = properties.getProperty(expectedEntry.key);
+                assertEquals(expectedEntry.expectedTranslation, translation);
+            }
         }
+    }
 
-        // check Double apostrophe
-        if (phraseLocale.getCode().equals("en"))
+
+    private static class ExpectedEntry
+    {
+        final String phraseLocaleCode;
+        final String key;
+        final String expectedTranslation;
+
+
+        private ExpectedEntry(String phraseLocaleCode, String key, String expectedTranslation)
         {
-            String translation = properties.getProperty("SERVER_ABORT");
-            assertEquals("Unfortunately, we haven't found a taxi for you.", translation);
+            this.phraseLocaleCode = phraseLocaleCode;
+            this.key = key;
+            this.expectedTranslation = expectedTranslation;
         }
-
     }
 
 }
