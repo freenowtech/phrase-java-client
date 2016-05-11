@@ -10,6 +10,8 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class JavaPropertiesFormat implements Format
 {
+
+    public static final String NAME = "properties";
     private final List<NameValuePair> options;
 
 
@@ -22,7 +24,7 @@ public class JavaPropertiesFormat implements Format
     @Override
     public String getName()
     {
-        return "properties";
+        return NAME;
     }
 
 
@@ -46,7 +48,14 @@ public class JavaPropertiesFormat implements Format
 
         public Builder setEscapeSingleQuotes(boolean escapeSingleQuotes)
         {
-            options.add(new BasicNameValuePair("format_options[escape_single_quotes]", "" + escapeSingleQuotes));
+            return setOption("escape_single_quotes", "" + escapeSingleQuotes);
+        }
+
+
+        public Builder setOption(String name, String value)
+        {
+            String fullName = String.format("format_options[%s]", name);
+            options.add(new BasicNameValuePair(fullName, value));
             return this;
         }
 
