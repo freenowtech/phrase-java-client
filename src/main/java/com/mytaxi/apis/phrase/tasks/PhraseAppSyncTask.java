@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.locale.DefaultPhraseLocaleAPI;
 import com.mytaxi.apis.phrase.api.locale.PhraseLocaleAPI;
 import com.mytaxi.apis.phrase.api.localedownload.DefaultPhraseLocaleDownloadAPI;
@@ -11,11 +12,13 @@ import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
 import com.mytaxi.apis.phrase.service.FileService;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.mytaxi.apis.phrase.api.localedownload.DefaultPhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
 
 /**
  * Created by m.winkelmann on 04.11.15.
@@ -36,11 +39,14 @@ public class PhraseAppSyncTask implements Runnable
     // logging
     private final String projectIdString;
 
+    //
+    private Format format = DEFAULT_FILE_FORMAT;
+
 
     public PhraseAppSyncTask(final String authToken, final String projectId)
     {
         // TODO - support for more projectIds but we need to think about how we want to save the message files
-        projectIds = Arrays.asList(projectId);
+        projectIds = Collections.singletonList(projectId);
         localeAPI = new DefaultPhraseLocaleAPI(authToken);
         localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken);
         projectIdString = Joiner.on(",").join(projectIds);
@@ -53,7 +59,7 @@ public class PhraseAppSyncTask implements Runnable
     {
         Preconditions.checkNotNull(authToken);
         Preconditions.checkNotNull(projectId);
-        this.projectIds = Arrays.asList(projectId);
+        this.projectIds = Collections.singletonList(projectId);
         this.localeAPI = localeApi;
         this.localeDownloadAPI = localeDownloadAPI;
         this.projectIdString = Joiner.on(",").join(projectIds);
@@ -78,11 +84,11 @@ public class PhraseAppSyncTask implements Runnable
                 {
                     for (final PhraseLocale locale : locales)
                     {
-                        byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, locale.getId());
+                        byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, locale.getId(), format);
                         if (translationByteArray == null || translationByteArray.length == 0)
                         {
                             LOG.warn("Could not receive any data from PhraseAppApi for locale: {}. Please check configuration in PhraseApp!", locale);
-                            translationByteArray = new String("no.data.received=true").getBytes();
+                            translationByteArray = "no.data.received=true".getBytes();
                         }
                         fileService.saveToFile(projectId, translationByteArray, locale.getCode().replace('-', '_'));
                     }
@@ -95,6 +101,12 @@ public class PhraseAppSyncTask implements Runnable
         {
             LOG.error("Error due running the PhraseAppSyncTask", e);
         }
+    }
+
+
+    List<PhraseProjectLocale> getPhraseLocales()
+    {
+        return phraseLocales;
     }
 
 
@@ -164,5 +176,11 @@ public class PhraseAppSyncTask implements Runnable
     public void setMessageFilePrefix(final String messageFilePrefix)
     {
         fileService.setMessageFilePrefix(messageFilePrefix);
+    }
+
+
+    public void setFormat(Format format)
+    {
+        this.format = format;
     }
 }
