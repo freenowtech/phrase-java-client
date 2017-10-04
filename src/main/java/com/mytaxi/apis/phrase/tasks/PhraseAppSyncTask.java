@@ -84,13 +84,7 @@ public class PhraseAppSyncTask implements Runnable
                 {
                     for (final PhraseLocale locale : locales)
                     {
-                        byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, locale.getId(), format);
-                        if (translationByteArray == null || translationByteArray.length == 0)
-                        {
-                            LOG.warn("Could not receive any data from PhraseAppApi for locale: {}. Please check configuration in PhraseApp!", locale);
-                            translationByteArray = "no.data.received=true".getBytes();
-                        }
-                        fileService.saveToFile(projectId, translationByteArray, locale.getCode().replace('-', '_'));
+                        updateLocales(projectId, locale);
                     }
                 }
             }
@@ -100,6 +94,25 @@ public class PhraseAppSyncTask implements Runnable
         catch (final Exception e)
         {
             LOG.error("Error due running the PhraseAppSyncTask", e);
+        }
+    }
+
+
+    private void updateLocales(String projectId, PhraseLocale locale)
+    {
+        try
+        {
+            byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, locale.getId(), format);
+            if (translationByteArray == null || translationByteArray.length == 0)
+            {
+                LOG.warn("Could not receive any data from PhraseAppApi for locale: {}. Please check configuration in PhraseApp!", locale);
+                translationByteArray = "no.data.received=true".getBytes();
+            }
+            fileService.saveToFile(projectId, translationByteArray, locale.getCode().replace('-', '_'));
+        }
+        catch (Exception e)
+        {
+            LOG.error("Error updating locale " + locale.getName(), e);
         }
     }
 
@@ -155,31 +168,13 @@ public class PhraseAppSyncTask implements Runnable
     }
 
 
-    public void setGeneratedResourcesFoldername(final String generatedResourcesFoldername)
-    {
-        fileService.setGeneratedResourcesFoldername(generatedResourcesFoldername);
-    }
-
-
-    public void setMessagesFoldername(final String messagesFoldername)
+    void setMessagesFoldername(final String messagesFoldername)
     {
         fileService.setMessagesFoldername(messagesFoldername);
     }
 
 
-    public void setMessageFilePostfix(final String messageFilePostfix)
-    {
-        fileService.setMessageFilePostfix(messageFilePostfix);
-    }
-
-
-    public void setMessageFilePrefix(final String messageFilePrefix)
-    {
-        fileService.setMessageFilePrefix(messageFilePrefix);
-    }
-
-
-    public void setFormat(Format format)
+    void setFormat(Format format)
     {
         this.format = format;
     }
