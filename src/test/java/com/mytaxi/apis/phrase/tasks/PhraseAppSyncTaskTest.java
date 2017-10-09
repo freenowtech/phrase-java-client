@@ -41,7 +41,7 @@ public class PhraseAppSyncTaskTest
 
         List<ExpectedEntry> expectedEntries = ImmutableList.of(
             new ExpectedEntry("ca", "incentiveservice.incentive.pricing.description", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
-            new ExpectedEntry("en", "SERVER_ABORT", "Unfortunately, we haven''t found a taxi for you.") // check Double apostrophe
+            new ExpectedEntry("en", "gatewayservice.rating_invalid_state", "You can''t rate cancelled trips.") // check double apostrophe
         );
 
         testRun(format, expectedEntries);
@@ -57,7 +57,7 @@ public class PhraseAppSyncTaskTest
 
         List<ExpectedEntry> expectedEntries = ImmutableList.of(
             new ExpectedEntry("ca", "incentiveservice.incentive.pricing.description", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
-            new ExpectedEntry("en", "SERVER_ABORT", "Unfortunately, we haven't found a taxi for you.") // check Double apostrophe
+            new ExpectedEntry("en", "gatewayservice.rating_invalid_state", "You can't rate cancelled trips.") // check single apostrophe
         );
 
         testRun(format, expectedEntries);
@@ -92,8 +92,8 @@ public class PhraseAppSyncTaskTest
         {
             System.out.println(phraseLocale);
 
-            File messagesFile = new File(folder, "messages_" + phraseLocale.getCode() + ".properties");
-            assertTrue(messagesFile.canRead());
+            File messagesFile = new File(folder, "messages_" + phraseLocale.getCode().replace('-', '_') + ".properties");
+            assertTrue("file " + messagesFile.getAbsolutePath() + " could not be read", messagesFile.canRead());
 
             try (InputStream in = new FileInputStream(messagesFile))
             {
