@@ -7,7 +7,8 @@
     <version>1.0.4-SNAPSHOT</version>
     <name>phrase-api</name>
     <description>This projects contains of services to handle the translations from [PhraseApp API
-        v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.</description>
+        v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.
+    </description>
     <url>https://github.com/mytaxi/phrase-java-client</url>
 
     <licenses>
@@ -32,26 +33,14 @@
         <url>${scm.url}</url>
     </scm>
 
-    <!--<distributionManagement>-->
-    <!--<repository>-->
-    <!--<id>ossrh</id>-->
-    <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-    <!--</repository>-->
-    <!--<snapshotRepository>-->
-    <!--<id>ossrh</id>-->
-    <!--<url>https://oss.sonatype.org/content/repositories/snapshots/</url>-->
-    <!--</snapshotRepository>-->
-    <!--</distributionManagement>-->
     <distributionManagement>
         <repository>
-            <id>repos.mytaxi.com-releases</id>
-            <name>repos.mytaxi.com-releases</name>
-            <url>http://repos.mytaxi.com:8081/artifactory/internal</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
-            <id>repos.mytaxi.com</id>
-            <name>repos.mytaxi.com-snapshots</name>
-            <url>http://repos.mytaxi.com:8081/artifactory/snapshots</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
