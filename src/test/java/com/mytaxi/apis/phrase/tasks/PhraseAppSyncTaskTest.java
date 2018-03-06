@@ -40,8 +40,8 @@ public class PhraseAppSyncTaskTest
             .build();
 
         List<ExpectedEntry> expectedEntries = ImmutableList.of(
-            new ExpectedEntry("ca", "incentiveservice.incentive.pricing.description", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
-            new ExpectedEntry("en", "gatewayservice.rating_invalid_state", "You can''t rate cancelled trips.") // check double apostrophe
+            new ExpectedEntry("de", "special_chars_test", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
+            new ExpectedEntry("de", "special_chars_apostrophe_test", "You can''t rate cancelled trips.") // check double apostrophe
         );
 
         testRun(format, expectedEntries);
@@ -56,8 +56,8 @@ public class PhraseAppSyncTaskTest
             .build();
 
         List<ExpectedEntry> expectedEntries = ImmutableList.of(
-            new ExpectedEntry("ca", "incentiveservice.incentive.pricing.description", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
-            new ExpectedEntry("en", "gatewayservice.rating_invalid_state", "You can't rate cancelled trips.") // check single apostrophe
+            new ExpectedEntry("de", "special_chars_test", "Crédito bonus fin de semana - sábado y domingo- número de identificación: {0}"),
+            new ExpectedEntry("de", "special_chars_apostrophe_test", "You can't rate cancelled trips.") // check single apostrophe
         );
 
         testRun(format, expectedEntries);
@@ -82,7 +82,7 @@ public class PhraseAppSyncTaskTest
 
         PhraseProjectLocale phraseProjectLocale = phraseProjectLocales.get(0);
         List<PhraseLocale> phraseLocales = phraseProjectLocale.getLocales();
-        assertTrue(phraseLocales.size() >= 11);
+        assertTrue(phraseLocales.size() >= 2);
 
         // check some files
         File folder = new File("./target/test-classes/" + uuid);
