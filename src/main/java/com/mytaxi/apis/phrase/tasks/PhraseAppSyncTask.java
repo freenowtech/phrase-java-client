@@ -94,6 +94,7 @@ public class PhraseAppSyncTask implements Runnable
         catch (final Exception e)
         {
             LOG.error("Error due running the PhraseAppSyncTask", e);
+            throw new RuntimeException(e);
         }
     }
 
