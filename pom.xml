@@ -7,7 +7,8 @@
     <version>1.0.5-SNAPSHOT</version>
     <name>phrase-api</name>
     <description>This projects contains of services to handle the translations from [PhraseApp API
-        v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.</description>
+        v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.
+    </description>
     <url>https://github.com/mytaxi/phrase-java-client</url>
 
     <licenses>
