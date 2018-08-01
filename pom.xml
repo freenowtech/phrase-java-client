@@ -45,7 +45,7 @@
 
     <properties>
         <jackson.version>[2.7.0,2.8.0)</jackson.version>
-        <javaVersion>1.7</javaVersion>
+        <javaVersion>1.8</javaVersion>
         <mavenVersion>2.0.9</mavenVersion>
         <scm.connection>scm:git:git@github.com:mytaxi/phrase-java-client.git</scm.connection>
         <scm.url>https://github.com/mytaxi/phrase-java-client</scm.url>
