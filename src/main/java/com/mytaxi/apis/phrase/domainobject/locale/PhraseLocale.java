@@ -1,6 +1,7 @@
 package com.mytaxi.apis.phrase.domainobject.locale;
 
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 /**
  * Created by m.winkelmann on 11.11.15.
@@ -86,6 +87,31 @@ public class PhraseLocale
             Preconditions.checkNotNull(code);
             Preconditions.checkNotNull(name);
         }
+    }
+
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        PhraseLocale that = (PhraseLocale) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(code, that.code) &&
+            Objects.equals(name, that.name);
+    }
+
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, code, name);
     }
 
 

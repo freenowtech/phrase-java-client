@@ -4,8 +4,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.mytaxi.apis.phrase.api.GenericPhraseAPI;
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
-import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
+import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -52,9 +53,10 @@ public class DefaultPhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]> 
         String projectIdsString = Joiner.on(",").join(projectIds);
         LOG.trace("Start to retrieve locales for projectIds: {}", projectIdsString);
 
-        ArrayList<PhraseProjectLocale> phraseLocales = new ArrayList<PhraseProjectLocale>(projectIds.size());
+        ArrayList<PhraseProjectLocale> phraseLocales = new ArrayList<>(projectIds.size());
         for (String projectId : projectIds)
         {
+            ResponseEntity<PhraseLocaleDTO[]> responseEntity = null;
             try
             {
                 String requestPath = createRequestPath(projectId);
@@ -67,7 +69,7 @@ public class DefaultPhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]> 
 
                 URI uri = builder.build();
 
-                ResponseEntity<PhraseLocaleDTO[]> responseEntity = requestPhrase(requestEntity, uri, PhraseLocaleDTO[].class);
+                responseEntity = requestPhrase(requestEntity, uri, PhraseLocaleDTO[].class);
 
                 PhraseLocaleDTO[] requestedLocales = handleResponse(projectId, requestPath, responseEntity);
 
@@ -75,9 +77,21 @@ public class DefaultPhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]> 
 
                 phraseLocales.add(phraseProjectLocale);
             }
+            catch (HttpClientErrorException e)
+            {
+                e.getResponseHeaders().forEach((key, value) -> LOG.debug("Header : [" + key + "] = " + value));
+                throw new PhraseAppApiException("API execution error", e);
+            }
             catch (URISyntaxException e)
             {
                 throw new RuntimeException("Something goes wrong due building of the request URI", e);
+            }
+            finally
+            {
+                if (responseEntity != null)
+                {
+                    responseEntity.getHeaders().forEach((key, value) -> LOG.debug("Header : [" + key + "] = " + value));
+                }
             }
         }
 
@@ -88,7 +102,7 @@ public class DefaultPhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]> 
 
     private String createRequestPath(String projectId)
     {
-        Map<String, String> placeholders = new HashMap<String, String>();
+        Map<String, String> placeholders = new HashMap<>();
         placeholders.put(PLACEHOLDER_PROJECT_ID, projectId);
         return createPath(PHRASE_LOCALES_PATH, placeholders);
     }

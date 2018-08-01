@@ -3,7 +3,7 @@ package com.mytaxi.apis.phrase.api;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class GenericPhraseAPI<T>
     protected String createPath(final String path, final Map<String, String> placeholders)
     {
         // TODO with URIBuilder or directly in createUriBuilder()
-        String requestPath = new String(path);
+        String requestPath = path;
 
         for (final Map.Entry<String, String> entity : placeholders.entrySet())
         {
@@ -100,7 +100,7 @@ public class GenericPhraseAPI<T>
     protected HttpEntity<Object> createHttpEntity(final String requestPath)
     {
         final HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         requestHeaders.add(org.apache.http.HttpHeaders.AUTHORIZATION, "token " + authToken);
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -141,7 +141,7 @@ public class GenericPhraseAPI<T>
     }
 
 
-    protected T handleResponse(final String projectId, final String requestPath, final ResponseEntity<T> responseEntity) throws PhraseAppApiException
+    public T handleResponse(final String projectId, final String requestPath, final ResponseEntity<T> responseEntity) throws PhraseAppApiException
     {
         T requestedData;
         final HttpStatus statusCode = responseEntity.getStatusCode();

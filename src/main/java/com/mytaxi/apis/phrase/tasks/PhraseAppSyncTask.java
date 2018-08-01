@@ -2,7 +2,6 @@ package com.mytaxi.apis.phrase.tasks;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.locale.DefaultPhraseLocaleAPI;
@@ -11,10 +10,12 @@ import com.mytaxi.apis.phrase.api.localedownload.DefaultPhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
+import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import com.mytaxi.apis.phrase.service.FileService;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +92,10 @@ public class PhraseAppSyncTask implements Runnable
 
             LOG.info("FINISHED Update Messages");
         }
+        catch (final PhraseAppApiException e) {
+            LOG.error("Error due execution Phrase API ", e);
+            throw new RuntimeException(e);
+        }
         catch (final Exception e)
         {
             LOG.error("Error due running the PhraseAppSyncTask", e);
@@ -126,14 +131,10 @@ public class PhraseAppSyncTask implements Runnable
 
     private List<PhraseLocale> getLocales(final String projectId)
     {
-        final Collection<PhraseProjectLocale> phrasesProjectLocales = Collections2.filter(phraseLocales, new Predicate<PhraseProjectLocale>()
-        {
-            @Override
-            public boolean apply(final PhraseProjectLocale projectLocale)
-            {
-                return projectLocale.getProjectId().equals(projectId);
-            }
-        });
+        final Collection<PhraseProjectLocale> phrasesProjectLocales = Collections2.filter(
+            getPhraseLocales(),
+            projectLocale -> Objects.requireNonNull(projectLocale).getProjectId().equals(projectId)
+        );
         if (phrasesProjectLocales.isEmpty())
         {
             LOG.warn("No locales found for projectId: " + projectId);
@@ -155,17 +156,10 @@ public class PhraseAppSyncTask implements Runnable
 
     private void initLocales()
     {
-        try
-        {
-            LOG.debug("Start: Initialize all locales for projectIds: " + projectIdString);
-            phraseLocales = localeAPI.listLocales(projectIds);
-            LOG.trace("Locales are successfully retreived: " + Joiner.on(",").join(phraseLocales));
-            LOG.debug("End: Initialize all locales for projectIds: " + projectIdString);
-        }
-        catch (final Exception e)
-        {
-            LOG.error("Error due calling the locales from phrase app", e);
-        }
+        LOG.debug("Start: Initialize all locales for projectIds: " + projectIdString);
+        phraseLocales = localeAPI.listLocales(projectIds);
+        LOG.trace("Locales are successfully retreived: " + Joiner.on(",").join(phraseLocales));
+        LOG.debug("End: Initialize all locales for projectIds: " + projectIdString);
     }
 
 
