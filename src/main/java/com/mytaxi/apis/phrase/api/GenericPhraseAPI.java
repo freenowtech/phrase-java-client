@@ -141,7 +141,7 @@ public class GenericPhraseAPI<T>
     }
 
 
-    protected T handleResponse(final String projectId, final String requestPath, final ResponseEntity<T> responseEntity) throws PhraseAppApiException
+    public T handleResponse(final String projectId, final String requestPath, final ResponseEntity<T> responseEntity) throws PhraseAppApiException
     {
         T requestedData;
         final HttpStatus statusCode = responseEntity.getStatusCode();
