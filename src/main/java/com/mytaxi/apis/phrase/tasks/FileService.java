@@ -1,4 +1,4 @@
-package com.mytaxi.apis.phrase.service;
+package com.mytaxi.apis.phrase.tasks;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
-public class FileService
+class FileService
 {
     private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
 
@@ -28,7 +28,7 @@ public class FileService
     private static final String PROJECT_ID_PLACEHOLDER = "{projectid}";
 
 
-    public FileService()
+    FileService()
     {
         try
         {

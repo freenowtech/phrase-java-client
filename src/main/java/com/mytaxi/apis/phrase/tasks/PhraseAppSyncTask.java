@@ -9,7 +9,6 @@ import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
-import com.mytaxi.apis.phrase.service.FileService;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
