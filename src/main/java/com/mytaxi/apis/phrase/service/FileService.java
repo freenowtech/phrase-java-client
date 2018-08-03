@@ -1,11 +1,9 @@
 package com.mytaxi.apis.phrase.service;
 
-import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -25,7 +23,7 @@ public class FileService
     private String messageFilePostfix = null;
     private String generatedResourcesFoldername = null;
     private String messagesFoldername = null;
-    private File messagesDirectory;
+    private Path messagesDirectory;
 
     private static final String PROJECT_ID_PLACEHOLDER = "{projectid}";
 
@@ -43,11 +41,9 @@ public class FileService
     }
 
 
-
-
-    public void saveToFile(final String projectId, final byte[] translationByteArray, final String locale)
+    public void saveToFile(final String projectId, final byte[] translationByteArray, final String locale) throws IOException
     {
-        LOG.debug("Start: saving translations to file for projectId: " + projectId);
+        LOG.debug("Start: saving translations to file for projectId: {}", projectId);
         if (messagesDirectory == null)
         {
             initMessageDirectory();
@@ -56,13 +52,13 @@ public class FileService
         final String fileName = createFileName(locale);
 
         final String messagesFoldername = createMessagesFoldername(projectId);
-        final File messageFolderPath = getOrCreateFolder(messagesFoldername);
-        FileOutputStream out = null;
+        final Path messageFolderPath = getOrCreateFolder(messagesFoldername);
+
         try
         {
-            final File file = getOrCreateFile(fileName, messageFolderPath);
-            out = new FileOutputStream(file);
-            out.write(translationByteArray);
+            Path path = getOrCreateFile(messageFolderPath, fileName);
+            Files.write(path, translationByteArray);
+
         }
         catch (final Exception ex)
         {
@@ -70,66 +66,34 @@ public class FileService
             String errorMessage = exMessage != null ? exMessage : ex.getClass().getCanonicalName();
             LOG.error("Error due handling messages-files - " + errorMessage, ex);
         }
-        finally
-        {
-            if (out != null)
-            {
-                try
-                {
-                    out.close();
-                }
-                catch (final IOException ex)
-                {
-                    LOG.error("Error due closing FileOutputStream", ex);
-                }
-            }
-        }
 
         LOG.debug("End: saving translations to file for projectId: " + projectId);
     }
 
 
-    private void initMessageDirectory()
+    private void initMessageDirectory() throws IOException
     {
-        messagesDirectory = new File(firstNonNull(generatedResourcesFoldername, GENERATED_RESOURCES_FOLDERNAME));
-        if (!messagesDirectory.exists())
-        {
-            messagesDirectory.mkdirs();
-        }
+        messagesDirectory = Paths.get(firstNonNull(generatedResourcesFoldername, GENERATED_RESOURCES_FOLDERNAME));
+        Files.createDirectories(messagesDirectory);
     }
 
 
-    private File getOrCreateFolder(final String messagesFoldername)
+    private Path getOrCreateFolder(String messagesFoldername) throws IOException
     {
-        final File messageFolderPath = new File(messagesDirectory.getAbsolutePath() + File.separator + messagesFoldername);
-        if (!messageFolderPath.exists())
-        {
-            messageFolderPath.mkdirs();
-        }
+        Path messageFolderPath = messagesDirectory.resolve(messagesFoldername);
+        Files.createDirectories(messageFolderPath);
         return messageFolderPath;
     }
 
 
-    private File getOrCreateFile(final String fileName, final File messageFolderPath) throws IOException
+    private Path getOrCreateFile(final Path messageFolderPath, final String fileName) throws IOException
     {
-        final File file = new File(messageFolderPath.getAbsolutePath() + File.separator + fileName);
-        if (!file.exists())
+        Path path = messageFolderPath.resolve(fileName);
+        if (!Files.exists(path))
         {
-            file.createNewFile();
+            Files.createFile(path);
         }
-        return file;
-    }
-
-
-    private Properties createProperties(final List<PhraseTranslation> translations)
-    {
-        final Properties prop = new Properties();
-
-        for (final PhraseTranslation translation : translations)
-        {
-            prop.setProperty(translation.getKey(), translation.getTranslation());
-        }
-        return prop;
+        return path;
     }
 
 
@@ -174,21 +138,4 @@ public class FileService
         return generatedResourcesFoldername;
     }
 
-
-    public String getMessageFilePostfix()
-    {
-        return messageFilePostfix;
-    }
-
-
-    public String getMessageFilePrefix()
-    {
-        return messageFilePrefix;
-    }
-
-
-    public String getMessagesFoldername()
-    {
-        return messagesFoldername;
-    }
 }
