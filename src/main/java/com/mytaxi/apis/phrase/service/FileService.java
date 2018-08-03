@@ -1,21 +1,17 @@
 package com.mytaxi.apis.phrase.service;
 
-import com.google.common.base.MoreObjects;
 import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
-/**
- * Created by m.winkelmann on 11.11.15.
- */
+import static com.google.common.base.MoreObjects.firstNonNull;
+
 public class FileService
 {
     private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
@@ -47,16 +43,6 @@ public class FileService
     }
 
 
-    public void saveToFile(final String projectId, final HashMap<String, List<PhraseTranslation>> localeToValues)
-    {
-        for (final Map.Entry<String, List<PhraseTranslation>> entry : localeToValues.entrySet())
-        {
-            final String locale = entry.getKey();
-            final List<PhraseTranslation> translations = entry.getValue();
-            final Properties prop = createProperties(translations);
-            saveToFile(projectId, prop.toString().getBytes(), locale);
-        }
-    }
 
 
     public void saveToFile(final String projectId, final byte[] translationByteArray, final String locale)
@@ -105,7 +91,7 @@ public class FileService
 
     private void initMessageDirectory()
     {
-        messagesDirectory = new File(MoreObjects.firstNonNull(generatedResourcesFoldername, GENERATED_RESOURCES_FOLDERNAME));
+        messagesDirectory = new File(firstNonNull(generatedResourcesFoldername, GENERATED_RESOURCES_FOLDERNAME));
         if (!messagesDirectory.exists())
         {
             messagesDirectory.mkdirs();
@@ -149,18 +135,13 @@ public class FileService
 
     private String createMessagesFoldername(final String projectId)
     {
-        final StringBuilder builder = new StringBuilder(MoreObjects.firstNonNull(messagesFoldername, MESSAGES_FOLDERNAME));
-        return builder.toString().replace(PROJECT_ID_PLACEHOLDER, projectId);
+        return firstNonNull(messagesFoldername, MESSAGES_FOLDERNAME).replace(PROJECT_ID_PLACEHOLDER, projectId);
     }
 
 
     private String createFileName(final String code)
     {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(MoreObjects.firstNonNull(messageFilePrefix, MESSAGE_FILE_PREFIX));
-        builder.append(code);
-        builder.append(MoreObjects.firstNonNull(messageFilePostfix, MESSAGE_FILE_POSTFIX));
-        return builder.toString();
+        return firstNonNull(messageFilePrefix, MESSAGE_FILE_PREFIX) + code + firstNonNull(messageFilePostfix, MESSAGE_FILE_POSTFIX);
     }
 
 

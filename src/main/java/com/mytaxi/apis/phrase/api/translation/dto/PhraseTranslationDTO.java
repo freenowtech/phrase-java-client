@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
 
-/**
- * Created by m.winkelmann on 05.11.15.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PhraseTranslationDTO
 {

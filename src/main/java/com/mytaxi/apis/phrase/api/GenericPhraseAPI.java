@@ -22,9 +22,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Created by m.winkelmann on 05.11.15.
- */
 public class GenericPhraseAPI<T>
 {
     private static final Logger LOG = LoggerFactory.getLogger(GenericPhraseAPI.class);
@@ -37,9 +34,9 @@ public class GenericPhraseAPI<T>
     protected final RestTemplate restTemplate;
     protected final String authToken;
 
-    private final Map<String, String> pathToETagCache = new HashMap<String, String>();
+    private final Map<String, String> pathToETagCache = new HashMap<>();
 
-    private final Map<String, T> pathToResponseCache = new HashMap<String, T>();
+    private final Map<String, T> pathToResponseCache = new HashMap<>();
 
 
     public GenericPhraseAPI(final RestTemplate restTemplate, final String authToken)
@@ -52,7 +49,7 @@ public class GenericPhraseAPI<T>
     protected static RestTemplate createRestTemplateWithConverter()
     {
         final RestTemplate restTemplate = new RestTemplate();
-        final List<HttpMessageConverter<?>> httpMessageConverters = new ArrayList<HttpMessageConverter<?>>();
+        final List<HttpMessageConverter<?>> httpMessageConverters = new ArrayList<>();
         httpMessageConverters.add(new MappingJackson2HttpMessageConverter());
         httpMessageConverters.add(new ByteArrayHttpMessageConverter());
         restTemplate.setMessageConverters(httpMessageConverters);

@@ -4,9 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.mytaxi.apis.phrase.api.format.Format;
-import com.mytaxi.apis.phrase.api.locale.DefaultPhraseLocaleAPI;
 import com.mytaxi.apis.phrase.api.locale.PhraseLocaleAPI;
-import com.mytaxi.apis.phrase.api.localedownload.DefaultPhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
@@ -19,11 +17,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.mytaxi.apis.phrase.api.localedownload.DefaultPhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
+import static com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
 
-/**
- * Created by m.winkelmann on 04.11.15.
- */
 public class PhraseAppSyncTask implements Runnable
 {
     private static final Logger LOG = LoggerFactory.getLogger(PhraseAppSyncTask.class);
@@ -48,8 +43,8 @@ public class PhraseAppSyncTask implements Runnable
     {
         // TODO - support for more projectIds but we need to think about how we want to save the message files
         projectIds = Collections.singletonList(projectId);
-        localeAPI = new DefaultPhraseLocaleAPI(authToken);
-        localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken);
+        localeAPI = new PhraseLocaleAPI(authToken);
+        localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
         projectIdString = Joiner.on(",").join(projectIds);
         fileService = new FileService();
         LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);

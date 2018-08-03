@@ -28,11 +28,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-/**
- * Created by m.winkelmann on 30.10.15.
- */
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultLocaleAPITest
+public class PhraseLocaleAPITest
 {
 
     private RestTemplate restTemplate;
@@ -60,7 +57,7 @@ public class DefaultLocaleAPITest
     {
         // GIVEN
         String authToken = cfg.authToken();
-        DefaultPhraseLocaleAPI phraseAppApiV2 = new DefaultPhraseLocaleAPI(authToken);
+        PhraseLocaleAPI phraseAppApiV2 = new PhraseLocaleAPI(authToken);
 
         String projectId = cfg.projectId();
 
@@ -99,11 +96,11 @@ public class DefaultLocaleAPITest
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
 
-        DefaultPhraseLocaleAPI defaultPhraseLocaleAPI = Mockito.spy(new DefaultPhraseLocaleAPI(authToken));
+        PhraseLocaleAPI phraseLocaleAPI = Mockito.spy(new PhraseLocaleAPI(authToken));
 
         // WHEN doing two request
-        List<PhraseProjectLocale> projectLocales1 = defaultPhraseLocaleAPI.listLocales(Collections.singletonList(projectId));
-        List<PhraseProjectLocale> projectLocales2 = defaultPhraseLocaleAPI.listLocales(Collections.singletonList(projectId));
+        List<PhraseProjectLocale> projectLocales1 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId));
+        List<PhraseProjectLocale> projectLocales2 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId));
 
         // THEN assert same result
         assertNotNull(projectLocales1);
@@ -111,7 +108,7 @@ public class DefaultLocaleAPITest
         assertEquals(projectLocales1, projectLocales2);
 
         // AND assert status codes 200 and 304 to verify E-Tag handling
-        verify(defaultPhraseLocaleAPI, times(2))
+        verify(phraseLocaleAPI, times(2))
             .handleResponse(eq(projectId), anyString(), responseEntityCaptor.capture());
         List<ResponseEntity<PhraseLocaleDTO[]>> responseEntities = responseEntityCaptor.getAllValues();
 

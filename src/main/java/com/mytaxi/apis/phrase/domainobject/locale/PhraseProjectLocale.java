@@ -3,9 +3,6 @@ package com.mytaxi.apis.phrase.domainobject.locale;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Created by m.winkelmann on 11.11.15.
- */
 public class PhraseProjectLocale
 {
     private String projectId;

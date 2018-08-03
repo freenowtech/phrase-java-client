@@ -11,7 +11,7 @@ import org.apache.http.message.BasicNameValuePair;
 public class JavaPropertiesFormat implements Format
 {
 
-    public static final String NAME = "properties";
+    private static final String NAME = "properties";
     private final List<NameValuePair> options;
 
 
