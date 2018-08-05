@@ -16,4 +16,9 @@ public interface TestConfig extends Config
     @DefaultValue("${ENV_PHRASE_LOCALEID_DE}")
     String localeIdDe();
 
+    @DefaultValue("${ENV_PHRASE_HOST}")
+    String host();
+
+    @DefaultValue("${ENV_PHRASE_SCHEME}")
+    String scheme();
 }

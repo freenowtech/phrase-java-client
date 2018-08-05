@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Created by m.winkelmann on 05.11.15.
  */
-public class DefaultPhraseTranslationAPITest
+public class DefaultPhraseTranslationAPITestNew
 {
     private RestTemplate restTemplate;
 
@@ -41,7 +41,6 @@ public class DefaultPhraseTranslationAPITest
     @Before
     public void beforeTest()
     {
-
         cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
         restTemplate = Mockito.mock(RestTemplate.class);
         String authTokenMock = "authMockTockenString";
@@ -118,7 +117,9 @@ public class DefaultPhraseTranslationAPITest
     {
         // GIVEN
         String authToken = cfg.authToken();
-        DefaultPhraseTranslationAPI translationAPI = new DefaultPhraseTranslationAPI(authToken);
+        String host = cfg.host();
+        String scheme = cfg.scheme();
+        DefaultPhraseTranslationAPI translationAPI = new DefaultPhraseTranslationAPI(authToken, scheme, host);
 
         String projectId = cfg.projectId();
 

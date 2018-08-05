@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by m.winkelmann on 24.11.15.
  */
-public class DefaultLocaleDownloadAPITest
+public class DefaultLocaleDownloadAPITestNew
 {
 
     private TestConfig cfg;
@@ -26,14 +26,16 @@ public class DefaultLocaleDownloadAPITest
 
 
     @Test
-    public void tesDownloadLocales_integration() throws Exception
+    public void tesDownloadLocales_customHost()
     {
         // GIVEN
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
+        String host = cfg.host();
+        String scheme = cfg.scheme();
 
-        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken);
+        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken, scheme, host);
 
         // WHEN
         byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -50,8 +52,10 @@ public class DefaultLocaleDownloadAPITest
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
+        String host = cfg.host();
+        String scheme = cfg.scheme();
 
-        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken);
+        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken, scheme, host);
 
         Format format = JavaPropertiesFormat.newBuilder()
             .setEscapeSingleQuotes(false)

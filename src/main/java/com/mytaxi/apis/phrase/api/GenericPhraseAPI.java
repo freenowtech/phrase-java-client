@@ -29,21 +29,36 @@ public class GenericPhraseAPI<T>
 {
     private static final Logger LOG = LoggerFactory.getLogger(GenericPhraseAPI.class);
 
-    private static final String PHRASE_SCHEME = "https";
+    private String PHRASE_SCHEME = "https";
 
-    private static final String PHRASE_HOST = "api.phraseapp.com";
+    private String PHRASE_HOST = "api.phraseapp.com";
 
     // --- internal services ---
     protected final RestTemplate restTemplate;
     protected final String authToken;
 
-    private final Map<String, String> pathToETagCache = new HashMap<String, String>();
+    private final Map<String, String> pathToETagCache = new HashMap<>();
 
-    private final Map<String, T> pathToResponseCache = new HashMap<String, T>();
+    private final Map<String, T> pathToResponseCache = new HashMap<>();
 
-
-    public GenericPhraseAPI(final RestTemplate restTemplate, final String authToken)
+    public GenericPhraseAPI(
+        final RestTemplate restTemplate,
+        final String authToken
+    )
     {
+        this.restTemplate = restTemplate;
+        this.authToken = authToken;
+    }
+
+    public GenericPhraseAPI(
+        final RestTemplate restTemplate,
+        final String scheme,
+        final String host,
+        final String authToken
+    )
+    {
+        PHRASE_SCHEME = scheme;
+        PHRASE_HOST = host;
         this.restTemplate = restTemplate;
         this.authToken = authToken;
     }

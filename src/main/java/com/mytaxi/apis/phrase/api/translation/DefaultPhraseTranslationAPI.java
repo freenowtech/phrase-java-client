@@ -29,12 +29,23 @@ public class DefaultPhraseTranslationAPI extends GenericPhraseAPI<PhraseTranslat
 
     private static final String PLACEHOLDER_LOCALE_ID = "{localeid}";
 
-    private static final String PHRASE_TRANSLATIONS_PATH = "/api/v2/projects/{projectid}/locales/{localeid}/translations";
+    private static final String PHRASE_TRANSLATIONS_PATH =
+        "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID + "/locales/" + PLACEHOLDER_LOCALE_ID + "/translations";
 
 
     protected DefaultPhraseTranslationAPI(final RestTemplate restTemplate, final String authToken)
     {
         super(restTemplate, authToken);
+    }
+
+
+    public DefaultPhraseTranslationAPI(
+        final String authToken,
+        final String scheme,
+        final String host
+    )
+    {
+        super(createRestTemplateWithConverter(), scheme, host, authToken);
     }
 
 

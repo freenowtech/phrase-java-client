@@ -55,6 +55,16 @@ public class PhraseAppSyncTask implements Runnable
         LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
     }
 
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String scheme, final String host)
+    {
+        projectIds = Collections.singletonList(projectId);
+        localeAPI = new DefaultPhraseLocaleAPI(authToken, scheme, host);
+        localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken, scheme, host);
+        projectIdString = Joiner.on(",").join(projectIds);
+        fileService = new FileService();
+        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+    }
+
 
     public PhraseAppSyncTask(final String authToken, final String projectId, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI, FileService fileService)
     {
