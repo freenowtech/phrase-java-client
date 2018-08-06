@@ -57,7 +57,7 @@ public class PhraseAppSyncTask implements Runnable
 
 
     /*
-      authToken - 
+      authToken -
       projectId -
       scheme - http or https
       host - host of api
