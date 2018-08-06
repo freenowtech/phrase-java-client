@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -93,6 +94,7 @@ public class DefaultLocaleAPITestNew
     }
 
     @Test
+    @Ignore
     public void listLocales_getTwoTimes_statusCode200and200_XRateLimitRemainingNotChanged()
     {
         // GIVEN
