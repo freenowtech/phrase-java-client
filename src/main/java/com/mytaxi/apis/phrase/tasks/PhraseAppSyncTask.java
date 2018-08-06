@@ -55,6 +55,13 @@ public class PhraseAppSyncTask implements Runnable
         LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
     }
 
+
+    /*
+      authToken - 
+      projectId -
+      scheme - http or https
+      host - host of api
+    */
     public PhraseAppSyncTask(final String authToken, final String projectId, final String scheme, final String host)
     {
         projectIds = Collections.singletonList(projectId);
@@ -102,7 +109,8 @@ public class PhraseAppSyncTask implements Runnable
 
             LOG.info("FINISHED Update Messages");
         }
-        catch (final PhraseAppApiException e) {
+        catch (final PhraseAppApiException e)
+        {
             LOG.error("Error due execution Phrase API ", e);
             throw new RuntimeException(e);
         }
