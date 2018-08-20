@@ -29,21 +29,45 @@ public class GenericPhraseAPI<T>
 {
     private static final Logger LOG = LoggerFactory.getLogger(GenericPhraseAPI.class);
 
-    private static final String PHRASE_SCHEME = "https";
+    private String PHRASE_SCHEME = "https";
 
-    private static final String PHRASE_HOST = "api.phraseapp.com";
+    private String PHRASE_HOST = "api.phraseapp.com";
 
     // --- internal services ---
-    protected final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
     protected final String authToken;
 
-    private final Map<String, String> pathToETagCache = new HashMap<String, String>();
+    private final Map<String, String> pathToETagCache = new HashMap<>();
 
-    private final Map<String, T> pathToResponseCache = new HashMap<String, T>();
+    private final Map<String, T> pathToResponseCache = new HashMap<>();
 
 
-    public GenericPhraseAPI(final RestTemplate restTemplate, final String authToken)
+    public GenericPhraseAPI(
+        final RestTemplate restTemplate,
+        final String authToken
+    )
     {
+        this.restTemplate = restTemplate;
+        this.authToken = authToken;
+    }
+
+
+    public GenericPhraseAPI(
+        final RestTemplate restTemplate,
+        final String scheme,
+        final String host,
+        final String authToken
+    )
+    {
+        if (scheme != null)
+        {
+            PHRASE_SCHEME = scheme;
+        }
+        if (host != null)
+        {
+            PHRASE_HOST = host;
+
+        }
         this.restTemplate = restTemplate;
         this.authToken = authToken;
     }
@@ -52,7 +76,7 @@ public class GenericPhraseAPI<T>
     protected static RestTemplate createRestTemplateWithConverter()
     {
         final RestTemplate restTemplate = new RestTemplate();
-        final List<HttpMessageConverter<?>> httpMessageConverters = new ArrayList<HttpMessageConverter<?>>();
+        final List<HttpMessageConverter<?>> httpMessageConverters = new ArrayList<>();
         httpMessageConverters.add(new MappingJackson2HttpMessageConverter());
         httpMessageConverters.add(new ByteArrayHttpMessageConverter());
         restTemplate.setMessageConverters(httpMessageConverters);
@@ -111,11 +135,11 @@ public class GenericPhraseAPI<T>
             LOG.debug("Use etag: {} for requestPath: {}", etag, requestPath);
         }
 
-        return new HttpEntity<Object>(requestHeaders);
+        return new HttpEntity<>(requestHeaders);
     }
 
 
-    protected void cacheETag(final String requestPath, final String eTag)
+    private void cacheETag(final String requestPath, final String eTag)
     {
         if (eTag != null)
         {
@@ -124,13 +148,13 @@ public class GenericPhraseAPI<T>
     }
 
 
-    protected void cacheData(final String requestPath, final T cacheData)
+    private void cacheData(final String requestPath, final T cacheData)
     {
         pathToResponseCache.put(requestPath, cacheData);
     }
 
 
-    protected T getCachedData(final String requestPath)
+    private T getCachedData(final String requestPath)
     {
         final T cachedData = pathToResponseCache.get(requestPath);
         if (cachedData == null)
@@ -152,7 +176,7 @@ public class GenericPhraseAPI<T>
                 logResponseStatus(requestPath, statusCode);
                 requestedData = responseEntity.getBody();
                 final HttpHeaders headers = responseEntity.getHeaders();
-                cacheETag(requestPath, headers != null ? headers.getETag() : null);
+                cacheETag(requestPath, headers.getETag());
                 cacheData(requestPath, requestedData);
                 break;
             }

@@ -34,7 +34,8 @@ public class DefaultPhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]> imp
 
     private static final String PLACEHOLDER_FILEFORMAT = "file_format";
 
-    private static final String PHRASE_LOCALES_DOWNLOAD_PATH = "/api/v2/projects/{projectid}/locales/{localeid}/download";
+    private static final String PHRASE_LOCALES_DOWNLOAD_PATH =
+        "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID + "/locales/" + PLACEHOLDER_LOCALE_ID + "/download";
 
     public static final Format DEFAULT_FILE_FORMAT = JavaPropertiesFormat.newBuilder().build();
 
@@ -48,6 +49,11 @@ public class DefaultPhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]> imp
     public DefaultPhraseLocaleDownloadAPI(final String authToken)
     {
         super(createRestTemplateWithConverter(), authToken);
+    }
+
+    public DefaultPhraseLocaleDownloadAPI(final String authToken, final String scheme, final String host)
+    {
+        super(createRestTemplateWithConverter(), scheme, host, authToken);
     }
 
 

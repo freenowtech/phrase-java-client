@@ -30,7 +30,7 @@ public class DefaultPhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]> 
     // ---- configuration -----
     private static final String PLACEHOLDER_PROJECT_ID = "{projectid}";
 
-    private static final String PHRASE_LOCALES_PATH = "/api/v2/projects/{projectid}/locales";
+    private static final String PHRASE_LOCALES_PATH = "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID + "/locales";
 
 
     public DefaultPhraseLocaleAPI(final RestTemplate restTemplate, final String authToken)
@@ -38,6 +38,11 @@ public class DefaultPhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]> 
         super(restTemplate, authToken);
     }
 
+
+    public DefaultPhraseLocaleAPI(final String authToken, final String scheme, final String host)
+    {
+        super(createRestTemplateWithConverter(), scheme, host, authToken);
+    }
 
     public DefaultPhraseLocaleAPI(final String authToken)
     {

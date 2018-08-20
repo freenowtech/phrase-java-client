@@ -56,6 +56,23 @@ public class PhraseAppSyncTask implements Runnable
     }
 
 
+    /*
+      authToken -
+      projectId -
+      scheme - http or https
+      host - host of api
+    */
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String scheme, final String host)
+    {
+        projectIds = Collections.singletonList(projectId);
+        localeAPI = new DefaultPhraseLocaleAPI(authToken, scheme, host);
+        localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken, scheme, host);
+        projectIdString = Joiner.on(",").join(projectIds);
+        fileService = new FileService();
+        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+    }
+
+
     public PhraseAppSyncTask(final String authToken, final String projectId, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI, FileService fileService)
     {
         Preconditions.checkNotNull(authToken);
@@ -92,7 +109,8 @@ public class PhraseAppSyncTask implements Runnable
 
             LOG.info("FINISHED Update Messages");
         }
-        catch (final PhraseAppApiException e) {
+        catch (final PhraseAppApiException e)
+        {
             LOG.error("Error due execution Phrase API ", e);
             throw new RuntimeException(e);
         }
