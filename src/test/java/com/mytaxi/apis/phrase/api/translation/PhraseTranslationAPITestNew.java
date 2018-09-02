@@ -3,6 +3,7 @@ package com.mytaxi.apis.phrase.api.translation;
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
 import com.mytaxi.apis.phrase.api.translation.dto.PhraseKeyDTO;
 import com.mytaxi.apis.phrase.api.translation.dto.PhraseTranslationDTO;
+import com.mytaxi.apis.phrase.config.DefaultPhraseAppConfig;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
@@ -44,9 +45,9 @@ public class PhraseTranslationAPITestNew
         cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
         restTemplate = Mockito.mock(RestTemplate.class);
         String authTokenMock = "authMockTockenString";
-        translationAPI = new PhraseTranslationAPI(restTemplate, authTokenMock);
         projectId = "SomeProjectId";
         localeId = "SomeLocaleId";
+        translationAPI = new PhraseTranslationAPI(restTemplate, new DefaultPhraseAppConfig(authTokenMock, projectId));
     }
 
 
@@ -119,11 +120,10 @@ public class PhraseTranslationAPITestNew
         String authToken = cfg.authToken();
         String host = cfg.host();
         String scheme = cfg.scheme();
-        PhraseTranslationAPI translationAPI = new PhraseTranslationAPI(authToken, scheme, host);
-
         String projectId = cfg.projectId();
-
         String localeIdDe = cfg.localeIdDe();
+
+        PhraseTranslationAPI translationAPI = new PhraseTranslationAPI(new DefaultPhraseAppConfig(authToken, projectId, scheme, host));
 
         // WHEN
         List<PhraseTranslation> phraseTranslations = translationAPI.listTranslations(projectId, localeIdDe);

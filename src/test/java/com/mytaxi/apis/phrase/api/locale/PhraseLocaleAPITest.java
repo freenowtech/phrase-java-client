@@ -1,6 +1,7 @@
 package com.mytaxi.apis.phrase.api.locale;
 
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
+import com.mytaxi.apis.phrase.config.DefaultPhraseAppConfig;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
@@ -57,9 +58,9 @@ public class PhraseLocaleAPITest
     {
         // GIVEN
         String authToken = cfg.authToken();
-        PhraseLocaleAPI phraseAppApiV2 = new PhraseLocaleAPI(authToken);
-
         String projectId = cfg.projectId();
+        PhraseLocaleAPI phraseAppApiV2 = new PhraseLocaleAPI(new DefaultPhraseAppConfig(authToken, projectId));
+
 
         // WHEN
         List<PhraseProjectLocale> phraseProjectLocales = phraseAppApiV2.listLocales(Collections.singletonList(projectId));
@@ -96,7 +97,7 @@ public class PhraseLocaleAPITest
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
 
-        PhraseLocaleAPI phraseLocaleAPI = Mockito.spy(new PhraseLocaleAPI(authToken));
+        PhraseLocaleAPI phraseLocaleAPI = Mockito.spy(new PhraseLocaleAPI(new DefaultPhraseAppConfig(authToken, projectId)));
 
         // WHEN doing two request
         List<PhraseProjectLocale> projectLocales1 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId));

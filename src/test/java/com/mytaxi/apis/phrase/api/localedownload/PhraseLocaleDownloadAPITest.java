@@ -2,6 +2,7 @@ package com.mytaxi.apis.phrase.api.localedownload;
 
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
+import com.mytaxi.apis.phrase.config.DefaultPhraseAppConfig;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
@@ -48,7 +49,7 @@ public class PhraseLocaleDownloadAPITest
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(new DefaultPhraseAppConfig(authToken, projectId));
 
         // WHEN
         byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -65,7 +66,7 @@ public class PhraseLocaleDownloadAPITest
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = Mockito.spy(new PhraseLocaleDownloadAPI(authToken));
+        PhraseLocaleDownloadAPI localeDownloadAPI = Mockito.spy(new PhraseLocaleDownloadAPI(new DefaultPhraseAppConfig(authToken, projectId)));
 
         // WHEN doing two request
         byte[] fileBytes1 = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -94,7 +95,7 @@ public class PhraseLocaleDownloadAPITest
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(new DefaultPhraseAppConfig(authToken, projectId));
 
         Format format = JavaPropertiesFormat.newBuilder()
             .setEscapeSingleQuotes(false)

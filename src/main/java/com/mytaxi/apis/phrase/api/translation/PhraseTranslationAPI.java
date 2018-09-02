@@ -3,6 +3,7 @@ package com.mytaxi.apis.phrase.api.translation;
 import com.google.common.base.Preconditions;
 import com.mytaxi.apis.phrase.api.GenericPhraseAPI;
 import com.mytaxi.apis.phrase.api.translation.dto.PhraseTranslationDTO;
+import com.mytaxi.apis.phrase.config.PhraseAppConfig;
 import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import java.net.URI;
@@ -33,25 +34,15 @@ public class PhraseTranslationAPI extends GenericPhraseAPI<PhraseTranslationDTO[
         "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID + "/locales/" + PLACEHOLDER_LOCALE_ID + "/translations";
 
 
-    protected PhraseTranslationAPI(final RestTemplate restTemplate, final String authToken)
+    protected PhraseTranslationAPI(PhraseAppConfig phraseAppConfig)
     {
-        super(restTemplate, authToken);
+        super(createRestTemplateWithConverter(), phraseAppConfig);
     }
 
 
-    public PhraseTranslationAPI(
-        final String authToken,
-        final String scheme,
-        final String host
-    )
+    protected PhraseTranslationAPI(final RestTemplate restTemplate, PhraseAppConfig phraseAppConfig)
     {
-        super(createRestTemplateWithConverter(), scheme, host, authToken);
-    }
-
-
-    public PhraseTranslationAPI(final String authToken)
-    {
-        super(createRestTemplateWithConverter(), authToken);
+        super(restTemplate, phraseAppConfig);
     }
 
 

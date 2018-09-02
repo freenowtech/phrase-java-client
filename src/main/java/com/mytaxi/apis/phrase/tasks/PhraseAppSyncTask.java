@@ -1,29 +1,29 @@
 package com.mytaxi.apis.phrase.tasks;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.locale.PhraseLocaleAPI;
 import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
+import com.mytaxi.apis.phrase.config.DefaultPhraseAppConfig;
+import com.mytaxi.apis.phrase.config.PhraseAppConfig;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
+import static java.util.Collections.singletonList;
 
 public class PhraseAppSyncTask implements Runnable
 {
     private static final Logger LOG = LoggerFactory.getLogger(PhraseAppSyncTask.class);
 
     // init
-    private final List<String> projectIds;
+    private final PhraseAppConfig phraseAppConfig;
     private final PhraseLocaleAPI localeAPI;
     private final PhraseLocaleDownloadAPI localeDownloadAPI;
     private final FileService fileService;
@@ -31,52 +31,34 @@ public class PhraseAppSyncTask implements Runnable
     // data
     private List<PhraseProjectLocale> phraseLocales;
 
-    // logging
-    private final String projectIdString;
-
-    //
     private Format format = DEFAULT_FILE_FORMAT;
 
 
     public PhraseAppSyncTask(final String authToken, final String projectId)
     {
-        // TODO - support for more projectIds but we need to think about how we want to save the message files
-        projectIds = Collections.singletonList(projectId);
-        localeAPI = new PhraseLocaleAPI(authToken);
-        localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
-        projectIdString = Joiner.on(",").join(projectIds);
-        fileService = new FileService();
-        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+        this(new DefaultPhraseAppConfig(authToken, projectId));
+
     }
 
 
-    /*
-      authToken -
-      projectId -
-      scheme - http or https
-      host - host of api
-    */
     public PhraseAppSyncTask(final String authToken, final String projectId, final String scheme, final String host)
     {
-        projectIds = Collections.singletonList(projectId);
-        localeAPI = new PhraseLocaleAPI(authToken, scheme, host);
-        localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
-        projectIdString = Joiner.on(",").join(projectIds);
-        fileService = new FileService();
-        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+        this(new DefaultPhraseAppConfig(authToken, projectId));
     }
 
 
     public PhraseAppSyncTask(final String authToken, final String projectId, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI, FileService fileService)
     {
-        Preconditions.checkNotNull(authToken);
-        Preconditions.checkNotNull(projectId);
-        this.projectIds = Collections.singletonList(projectId);
-        this.localeAPI = localeApi;
-        this.localeDownloadAPI = localeDownloadAPI;
-        this.projectIdString = Joiner.on(",").join(projectIds);
-        this.fileService = fileService;
-        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+        this(new DefaultPhraseAppConfig(authToken, projectId));
+    }
+
+
+    public PhraseAppSyncTask(PhraseAppConfig phraseAppConfig)
+    {
+        this.phraseAppConfig = phraseAppConfig;
+        this.localeAPI = new PhraseLocaleAPI(phraseAppConfig);
+        this.localeDownloadAPI = new PhraseLocaleDownloadAPI(phraseAppConfig);
+        this.fileService = new FileService();
     }
 
 
@@ -89,15 +71,13 @@ public class PhraseAppSyncTask implements Runnable
 
             checkAndGetPhraseLocales();
 
-            for (final String projectId : projectIds)
+            String projectId = phraseAppConfig.getProjectId();
+            final List<PhraseLocale> locales = getLocales(projectId);
+            if (locales != null)
             {
-                final List<PhraseLocale> locales = getLocales(projectId);
-                if (locales != null)
+                for (final PhraseLocale locale : locales)
                 {
-                    for (final PhraseLocale locale : locales)
-                    {
-                        updateLocale(projectId, locale);
-                    }
+                    updateLocale(projectId, locale);
                 }
             }
 
@@ -168,10 +148,7 @@ public class PhraseAppSyncTask implements Runnable
 
     private void initLocales()
     {
-        LOG.debug("Start: Initialize all locales for projectIds: " + projectIdString);
-        phraseLocales = localeAPI.listLocales(projectIds);
-        LOG.trace("Locales are successfully retreived: " + Joiner.on(",").join(phraseLocales));
-        LOG.debug("End: Initialize all locales for projectIds: " + projectIdString);
+        phraseLocales = localeAPI.listLocales(singletonList(phraseAppConfig.getProjectId()));
     }
 
 

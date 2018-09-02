@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mytaxi.apis.phrase.api.GenericPhraseAPI;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
+import com.mytaxi.apis.phrase.config.PhraseAppConfig;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -40,20 +41,15 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
     public static final Format DEFAULT_FILE_FORMAT = JavaPropertiesFormat.newBuilder().build();
 
 
-    protected PhraseLocaleDownloadAPI(final RestTemplate restTemplate, final String authToken)
+    public PhraseLocaleDownloadAPI(RestTemplate restTemplate, PhraseAppConfig phraseAppConfig)
     {
-        super(restTemplate, authToken);
+        super(restTemplate, phraseAppConfig);
     }
 
 
-    public PhraseLocaleDownloadAPI(final String authToken)
+    public PhraseLocaleDownloadAPI(PhraseAppConfig phraseAppConfig)
     {
-        super(createRestTemplateWithConverter(), authToken);
-    }
-
-    public PhraseLocaleDownloadAPI(final String authToken, final String scheme, final String host)
-    {
-        super(createRestTemplateWithConverter(), scheme, host, authToken);
+        super(createRestTemplateWithConverter(), phraseAppConfig);
     }
 
 

@@ -1,5 +1,6 @@
 package com.mytaxi.apis.phrase.api;
 
+import com.mytaxi.apis.phrase.config.PhraseAppConfig;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,47 +27,16 @@ public class GenericPhraseAPI<T>
 {
     private static final Logger LOG = LoggerFactory.getLogger(GenericPhraseAPI.class);
 
-    private String PHRASE_SCHEME = "https";
-
-    private String PHRASE_HOST = "api.phraseapp.com";
-
-    // --- internal services ---
-    private final RestTemplate restTemplate;
-    protected final String authToken;
-
     private final Map<String, String> pathToETagCache = new HashMap<>();
-
     private final Map<String, T> pathToResponseCache = new HashMap<>();
+    private final RestTemplate restTemplate;
+    private final PhraseAppConfig phraseAppConfig;
 
 
-    public GenericPhraseAPI(
-        final RestTemplate restTemplate,
-        final String authToken
-    )
+    public GenericPhraseAPI(RestTemplate restTemplate, PhraseAppConfig phraseAppConfig)
     {
         this.restTemplate = restTemplate;
-        this.authToken = authToken;
-    }
-
-
-    public GenericPhraseAPI(
-        final RestTemplate restTemplate,
-        final String scheme,
-        final String host,
-        final String authToken
-    )
-    {
-        if (scheme != null)
-        {
-            PHRASE_SCHEME = scheme;
-        }
-        if (host != null)
-        {
-            PHRASE_HOST = host;
-
-        }
-        this.restTemplate = restTemplate;
-        this.authToken = authToken;
+        this.phraseAppConfig = phraseAppConfig;
     }
 
 
@@ -105,15 +75,20 @@ public class GenericPhraseAPI<T>
 
     protected URIBuilder createUriBuilder(final String path, final List<NameValuePair> parameters)
     {
-        final URIBuilder builder = new URIBuilder();
-        builder.setScheme(PHRASE_SCHEME)
-            .setHost(PHRASE_HOST)
+        String host = phraseAppConfig.getBaseUrl()
+            .replace("https://", "")
+            .replace("http://", "");
+
+        final URIBuilder builder = new URIBuilder()
+            .setScheme("https")
+            .setHost(host)
             .setPath(path);
 
         if (parameters != null)
         {
             builder.setParameters(parameters);
         }
+
         return builder;
     }
 
@@ -122,7 +97,7 @@ public class GenericPhraseAPI<T>
     {
         final HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        requestHeaders.add(org.apache.http.HttpHeaders.AUTHORIZATION, "token " + authToken);
+        requestHeaders.add(org.apache.http.HttpHeaders.AUTHORIZATION, "token " + phraseAppConfig.getAuthToken());
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         if (pathToETagCache.containsKey(requestPath))

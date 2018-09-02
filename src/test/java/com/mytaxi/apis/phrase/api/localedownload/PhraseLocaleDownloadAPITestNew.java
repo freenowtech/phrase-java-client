@@ -2,6 +2,7 @@ package com.mytaxi.apis.phrase.api.localedownload;
 
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
+import com.mytaxi.apis.phrase.config.DefaultPhraseAppConfig;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
@@ -35,7 +36,7 @@ public class PhraseLocaleDownloadAPITestNew
         String host = cfg.host();
         String scheme = cfg.scheme();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(new DefaultPhraseAppConfig(authToken, projectId, scheme, host));
 
         // WHEN
         byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -55,7 +56,7 @@ public class PhraseLocaleDownloadAPITestNew
         String host = cfg.host();
         String scheme = cfg.scheme();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(new DefaultPhraseAppConfig(authToken, projectId, scheme, host));
 
         Format format = JavaPropertiesFormat.newBuilder()
             .setEscapeSingleQuotes(false)

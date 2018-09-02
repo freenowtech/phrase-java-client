@@ -3,6 +3,7 @@ package com.mytaxi.apis.phrase.api.translation;
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
 import com.mytaxi.apis.phrase.api.translation.dto.PhraseKeyDTO;
 import com.mytaxi.apis.phrase.api.translation.dto.PhraseTranslationDTO;
+import com.mytaxi.apis.phrase.config.DefaultPhraseAppConfig;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
@@ -45,8 +46,8 @@ public class PhraseTranslationAPITest
         cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
         restTemplate = Mockito.mock(RestTemplate.class);
         String authTokenMock = "authMockTockenString";
-        translationAPI = new PhraseTranslationAPI(restTemplate, authTokenMock);
         projectId = "SomeProjectId";
+        translationAPI = new PhraseTranslationAPI(restTemplate, new DefaultPhraseAppConfig(authTokenMock, projectId));
         localeId = "SomeLocaleId";
     }
 
@@ -118,11 +119,12 @@ public class PhraseTranslationAPITest
     {
         // GIVEN
         String authToken = cfg.authToken();
-        PhraseTranslationAPI translationAPI = new PhraseTranslationAPI(authToken);
-
         String projectId = cfg.projectId();
-
         String localeIdDe = cfg.localeIdDe();
+
+        PhraseTranslationAPI translationAPI = new PhraseTranslationAPI(new DefaultPhraseAppConfig(authToken, projectId));
+
+
 
         // WHEN
         List<PhraseTranslation> phraseTranslations = translationAPI.listTranslations(projectId, localeIdDe);
