@@ -28,9 +28,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-/**
- * Created by m.winkelmann on 30.10.15.
- */
 @RunWith(MockitoJUnitRunner.class)
 public class PhraseLocaleAPITest
 {

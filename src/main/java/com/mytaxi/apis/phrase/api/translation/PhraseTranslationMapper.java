@@ -6,9 +6,6 @@ import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by m.winkelmann on 11.11.15.
- */
 public class PhraseTranslationMapper
 {
     public static List<PhraseTranslation> makePhraseTranslations(PhraseTranslationDTO[] requestedTranslations)

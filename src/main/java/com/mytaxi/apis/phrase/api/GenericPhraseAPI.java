@@ -22,9 +22,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Created by m.winkelmann on 05.11.15.
- */
 public class GenericPhraseAPI<T>
 {
     private static final Logger LOG = LoggerFactory.getLogger(GenericPhraseAPI.class);

@@ -2,9 +2,7 @@ package com.mytaxi.apis.phrase.api.locale.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * Created by m.winkelmann on 05.11.15.
- */
+@SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PhraseLocaleDTO
 {

@@ -2,9 +2,6 @@ package com.mytaxi.apis.phrase.api.translation.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * Created by m.winkelmann on 05.11.15.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PhraseKeyDTO
 {

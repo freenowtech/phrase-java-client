@@ -9,7 +9,6 @@ import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
-import com.mytaxi.apis.phrase.service.FileService;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,9 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import static com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
 
-/**
- * Created by m.winkelmann on 04.11.15.
- */
 public class PhraseAppSyncTask implements Runnable
 {
     private static final Logger LOG = LoggerFactory.getLogger(PhraseAppSyncTask.class);
