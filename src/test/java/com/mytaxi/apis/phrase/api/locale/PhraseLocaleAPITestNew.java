@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
  * Created by m.winkelmann on 30.10.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultLocaleAPITestNew
+public class PhraseLocaleAPITestNew
 {
 
     private RestTemplate restTemplate;
@@ -64,7 +64,7 @@ public class DefaultLocaleAPITestNew
         String host = cfg.host();
         String scheme = cfg.scheme();
 
-        DefaultPhraseLocaleAPI phraseAppApiV2 = new DefaultPhraseLocaleAPI(authToken, scheme, host);
+        PhraseLocaleAPI phraseAppApiV2 = new PhraseLocaleAPI(authToken, scheme, host);
 
         // WHEN
         List<PhraseProjectLocale> phraseProjectLocales = phraseAppApiV2.listLocales(Collections.singletonList(projectId));
@@ -103,11 +103,11 @@ public class DefaultLocaleAPITestNew
         String host = cfg.host();
         String scheme = cfg.scheme();
 
-        DefaultPhraseLocaleAPI defaultPhraseLocaleAPI = Mockito.spy(new DefaultPhraseLocaleAPI(authToken, scheme, host));
+        PhraseLocaleAPI phraseLocaleAPI = Mockito.spy(new PhraseLocaleAPI(authToken, scheme, host));
 
         // WHEN doing two request
-        List<PhraseProjectLocale> projectLocales1 = defaultPhraseLocaleAPI.listLocales(Collections.singletonList(projectId));
-        List<PhraseProjectLocale> projectLocales2 = defaultPhraseLocaleAPI.listLocales(Collections.singletonList(projectId));
+        List<PhraseProjectLocale> projectLocales1 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId));
+        List<PhraseProjectLocale> projectLocales2 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId));
 
         // THEN assert same result
         assertNotNull(projectLocales1);
@@ -115,7 +115,7 @@ public class DefaultLocaleAPITestNew
         assertEquals(projectLocales1, projectLocales2);
 
         // AND assert status codes 200 and 304 to verify E-Tag handling
-        verify(defaultPhraseLocaleAPI, times(2))
+        verify(phraseLocaleAPI, times(2))
             .handleResponse(eq(projectId), anyString(), responseEntityCaptor.capture());
         List<ResponseEntity<PhraseLocaleDTO[]>> responseEntities = responseEntityCaptor.getAllValues();
 

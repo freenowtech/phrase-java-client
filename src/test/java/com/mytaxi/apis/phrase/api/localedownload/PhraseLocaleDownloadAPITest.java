@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
  * Created by m.winkelmann on 24.11.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultLocaleDownloadAPITest
+public class PhraseLocaleDownloadAPITest
 {
 
     @Captor
@@ -51,7 +51,7 @@ public class DefaultLocaleDownloadAPITest
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
 
-        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
 
         // WHEN
         byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -68,7 +68,7 @@ public class DefaultLocaleDownloadAPITest
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
 
-        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = Mockito.spy(new DefaultPhraseLocaleDownloadAPI(authToken));
+        PhraseLocaleDownloadAPI localeDownloadAPI = Mockito.spy(new PhraseLocaleDownloadAPI(authToken));
 
         // WHEN doing two request
         byte[] fileBytes1 = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -97,7 +97,7 @@ public class DefaultLocaleDownloadAPITest
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
 
-        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
 
         Format format = JavaPropertiesFormat.newBuilder()
             .setEscapeSingleQuotes(false)

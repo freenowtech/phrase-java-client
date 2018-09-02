@@ -25,11 +25,11 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Created by m.winkelmann on 05.11.15.
  */
-public class DefaultPhraseTranslationAPITestNew
+public class PhraseTranslationAPITest
 {
     private RestTemplate restTemplate;
 
-    private DefaultPhraseTranslationAPI translationAPI;
+    private PhraseTranslationAPI translationAPI;
 
     private String projectId;
 
@@ -41,10 +41,11 @@ public class DefaultPhraseTranslationAPITestNew
     @Before
     public void beforeTest()
     {
+
         cfg = ConfigFactory.create(TestConfig.class, System.getenv(), System.getProperties());
         restTemplate = Mockito.mock(RestTemplate.class);
         String authTokenMock = "authMockTockenString";
-        translationAPI = new DefaultPhraseTranslationAPI(restTemplate, authTokenMock);
+        translationAPI = new PhraseTranslationAPI(restTemplate, authTokenMock);
         projectId = "SomeProjectId";
         localeId = "SomeLocaleId";
     }
@@ -117,9 +118,7 @@ public class DefaultPhraseTranslationAPITestNew
     {
         // GIVEN
         String authToken = cfg.authToken();
-        String host = cfg.host();
-        String scheme = cfg.scheme();
-        DefaultPhraseTranslationAPI translationAPI = new DefaultPhraseTranslationAPI(authToken, scheme, host);
+        PhraseTranslationAPI translationAPI = new PhraseTranslationAPI(authToken);
 
         String projectId = cfg.projectId();
 

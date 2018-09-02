@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by m.winkelmann on 24.11.15.
  */
-public class DefaultLocaleDownloadAPITestNew
+public class PhraseLocaleDownloadAPITestNew
 {
 
     private TestConfig cfg;
@@ -35,7 +35,7 @@ public class DefaultLocaleDownloadAPITestNew
         String host = cfg.host();
         String scheme = cfg.scheme();
 
-        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken, scheme, host);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
 
         // WHEN
         byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -55,7 +55,7 @@ public class DefaultLocaleDownloadAPITestNew
         String host = cfg.host();
         String scheme = cfg.scheme();
 
-        DefaultPhraseLocaleDownloadAPI localeDownloadAPI = new DefaultPhraseLocaleDownloadAPI(authToken, scheme, host);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
 
         Format format = JavaPropertiesFormat.newBuilder()
             .setEscapeSingleQuotes(false)
