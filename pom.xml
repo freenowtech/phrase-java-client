@@ -4,7 +4,7 @@
 
     <groupId>com.mytaxi.apis</groupId>
     <artifactId>phrase-java-client</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.6</version>
     <name>phrase-api</name>
     <description>This projects contains of services to handle the translations from [PhraseApp API
         v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.</description>
@@ -28,7 +28,7 @@
     <scm>
         <connection>${scm.connection}</connection>
         <developerConnection>${scm.connection}</developerConnection>
-        <tag>phrase-java-client-1.0.2</tag>
+        <tag>phrase-java-client-1.0.6</tag>
         <url>${scm.url}</url>
     </scm>
 
@@ -94,6 +94,12 @@
             <version>${jackson.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+
         <!-- HTTP Functions(RestTemplate, ...) -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -122,12 +128,6 @@
             <artifactId>mockito-all</artifactId>
             <version>1.10.19</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.8.0</version>
         </dependency>
 
         <dependency>
