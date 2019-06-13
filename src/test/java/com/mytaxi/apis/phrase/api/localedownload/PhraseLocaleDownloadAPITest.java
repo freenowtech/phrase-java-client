@@ -93,6 +93,7 @@ public class PhraseLocaleDownloadAPITest
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
+        List<String> branches = cfg.branches();
 
         PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
 
@@ -101,7 +102,7 @@ public class PhraseLocaleDownloadAPITest
             .build();
 
         // WHEN
-        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe, format);
+        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, branches.get(0), localeIdDe, format);
 
         // THEN
         assertNotNull(fileBytes);

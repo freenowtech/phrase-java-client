@@ -2,8 +2,9 @@ package com.mytaxi.apis.phrase.api.locale;
 
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
 import com.mytaxi.apis.phrase.config.TestConfig;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseBranch;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
-import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseProject;
 import java.util.Collections;
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
@@ -63,20 +64,24 @@ public class PhraseLocaleAPITestNew
         String projectId = cfg.projectId();
         String host = cfg.host();
         String scheme = cfg.scheme();
+        List<String> branches = cfg.branches();
 
         PhraseLocaleAPI phraseAppApiV2 = new PhraseLocaleAPI(authToken, scheme, host);
 
         // WHEN
-        List<PhraseProjectLocale> phraseProjectLocales = phraseAppApiV2.listLocales(Collections.singletonList(projectId));
+        List<PhraseProject> phraseProjects = phraseAppApiV2.listLocales(Collections.singletonList(projectId), branches);
 
         // THEN
-        for (PhraseProjectLocale projectLocale : phraseProjectLocales)
+        for (PhraseProject phraseProject : phraseProjects)
         {
-            List<PhraseLocale> locales = projectLocale.getLocales();
-            assertTrue(locales.size() >= 2);
+            for (PhraseBranch phraseBranch : phraseProject.getBranches())
+            {
+                List<PhraseLocale> locales = phraseBranch.getLocales();
+                assertTrue(locales.size() >= 2);
 
-            assertContainsPhraseLocaleCode(locales, "de");
-            assertContainsPhraseLocaleCode(locales, "en");
+                assertContainsPhraseLocaleCode(locales, "de");
+                assertContainsPhraseLocaleCode(locales, "en");
+            }
         }
     }
 
@@ -102,17 +107,18 @@ public class PhraseLocaleAPITestNew
         String projectId = cfg.projectId();
         String host = cfg.host();
         String scheme = cfg.scheme();
+        List<String> branches = cfg.branches();
 
         PhraseLocaleAPI phraseLocaleAPI = Mockito.spy(new PhraseLocaleAPI(authToken, scheme, host));
 
         // WHEN doing two request
-        List<PhraseProjectLocale> projectLocales1 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId));
-        List<PhraseProjectLocale> projectLocales2 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId));
+        List<PhraseProject> phraseProject1 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId), branches);
+        List<PhraseProject> phraseProject2 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId), branches);
 
         // THEN assert same result
-        assertNotNull(projectLocales1);
-        assertNotNull(projectLocales2);
-        assertEquals(projectLocales1, projectLocales2);
+        assertNotNull(phraseProject1);
+        assertNotNull(phraseProject2);
+        assertEquals(phraseProject1, phraseProject2);
 
         // AND assert status codes 200 and 304 to verify E-Tag handling
         verify(phraseLocaleAPI, times(2))

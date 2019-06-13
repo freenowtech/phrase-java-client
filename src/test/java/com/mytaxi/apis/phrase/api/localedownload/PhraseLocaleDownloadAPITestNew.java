@@ -3,6 +3,7 @@ package com.mytaxi.apis.phrase.api.localedownload;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
 import com.mytaxi.apis.phrase.config.TestConfig;
+import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +55,8 @@ public class PhraseLocaleDownloadAPITestNew
         String localeIdDe = cfg.localeIdDe();
         String host = cfg.host();
         String scheme = cfg.scheme();
+        List<String> branches = cfg.branches();
+
 
         PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
 
@@ -62,7 +65,7 @@ public class PhraseLocaleDownloadAPITestNew
             .build();
 
         // WHEN
-        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe, format);
+        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, branches.get(0), localeIdDe, format);
 
         // THEN
         assertNotNull(fileBytes);

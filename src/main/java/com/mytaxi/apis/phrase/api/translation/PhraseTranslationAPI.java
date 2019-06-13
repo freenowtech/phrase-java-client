@@ -7,15 +7,20 @@ import com.mytaxi.apis.phrase.domainobject.translation.PhraseTranslation;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import static com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_BRANCH;
 
 /**
  * Created by m.winkelmann on 05.11.15.
@@ -31,6 +36,8 @@ public class PhraseTranslationAPI extends GenericPhraseAPI<PhraseTranslationDTO[
 
     private static final String PHRASE_TRANSLATIONS_PATH =
         "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID + "/locales/" + PLACEHOLDER_LOCALE_ID + "/translations";
+
+    private static final String PARAMETER_BRANCH = "branch";
 
 
     protected PhraseTranslationAPI(final RestTemplate restTemplate, final String authToken)
@@ -57,6 +64,12 @@ public class PhraseTranslationAPI extends GenericPhraseAPI<PhraseTranslationDTO[
 
     public List<PhraseTranslation> listTranslations(String projectId, String localeId) throws PhraseAppApiException
     {
+        return listTranslations(projectId, DEFAULT_BRANCH, localeId);
+    }
+
+
+    public List<PhraseTranslation> listTranslations(String projectId, String branch, String localeId) throws PhraseAppApiException
+    {
         Preconditions.checkNotNull(projectId, "ProjectId must not be null.");
         Preconditions.checkNotNull(localeId, "LocaleId must not be null.");
         LOG.trace("Start to retrieve translations for projectId: {} and localeId: {}", projectId, localeId);
@@ -66,9 +79,16 @@ public class PhraseTranslationAPI extends GenericPhraseAPI<PhraseTranslationDTO[
         {
             String requestPath = createRequestPath(projectId, localeId);
 
-            LOG.trace("Call requestPath: {} to get locales from phrase.", requestPath);
+            LOG.trace("Call requestPath: {} to get translations from phrase.", requestPath);
 
-            final URIBuilder builder = createUriBuilder(requestPath);
+            final List<NameValuePair> parameters = new ArrayList<>();
+
+            if (!DEFAULT_BRANCH.equals(branch))
+            {
+                parameters.add(new BasicNameValuePair(PARAMETER_BRANCH, branch));
+            }
+
+            final URIBuilder builder = createUriBuilder(requestPath, parameters);
 
             HttpEntity<Object> requestEntity = createHttpEntity(requestPath);
 

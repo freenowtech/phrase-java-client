@@ -6,9 +6,11 @@ import com.google.common.collect.Collections2;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.locale.PhraseLocaleAPI;
 import com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseBranch;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
-import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseProject;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
+import static com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_BRANCH;
 
 public class PhraseAppSyncTask implements Runnable
 {
@@ -24,31 +27,35 @@ public class PhraseAppSyncTask implements Runnable
 
     // init
     private final List<String> projectIds;
+    private final List<String> branches;
     private final PhraseLocaleAPI localeAPI;
     private final PhraseLocaleDownloadAPI localeDownloadAPI;
     private final FileService fileService;
 
     // data
-    private List<PhraseProjectLocale> phraseLocales;
+    private List<PhraseProject> phraseProjects;
 
     // logging
     private final String projectIdString;
+    private final String branchesString;
 
     //
     private Format format = DEFAULT_FILE_FORMAT;
+
 
 
     public PhraseAppSyncTask(final String authToken, final String projectId)
     {
         // TODO - support for more projectIds but we need to think about how we want to save the message files
         projectIds = Collections.singletonList(projectId);
+        branches = Arrays.asList(DEFAULT_BRANCH);
         localeAPI = new PhraseLocaleAPI(authToken);
         localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
         projectIdString = Joiner.on(",").join(projectIds);
+        branchesString = Joiner.on(",").join(branches);
         fileService = new FileService();
-        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
     }
-
 
     /*
       authToken -
@@ -58,25 +65,45 @@ public class PhraseAppSyncTask implements Runnable
     */
     public PhraseAppSyncTask(final String authToken, final String projectId, final String scheme, final String host)
     {
+        this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), scheme, host);
+    }
+
+    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, final String scheme, final String host)
+    {
         projectIds = Collections.singletonList(projectId);
+        this.branches = branches;
         localeAPI = new PhraseLocaleAPI(authToken, scheme, host);
         localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
         projectIdString = Joiner.on(",").join(projectIds);
+        branchesString = Joiner.on(",").join(branches);
         fileService = new FileService();
-        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
     }
-
 
     public PhraseAppSyncTask(final String authToken, final String projectId, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI, FileService fileService)
     {
+        this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), localeApi, localeDownloadAPI, fileService);
+    }
+
+    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI,
+        FileService fileService)
+    {
         Preconditions.checkNotNull(authToken);
         Preconditions.checkNotNull(projectId);
+        this.branches = branches;
         this.projectIds = Collections.singletonList(projectId);
         this.localeAPI = localeApi;
         this.localeDownloadAPI = localeDownloadAPI;
         this.projectIdString = Joiner.on(",").join(projectIds);
+        branchesString = Joiner.on(",").join(branches);
         this.fileService = fileService;
-        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString);
+        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
+    }
+
+
+    List<PhraseProject> getPhraseProjects()
+    {
+        return phraseProjects;
     }
 
 
@@ -89,17 +116,9 @@ public class PhraseAppSyncTask implements Runnable
 
             checkAndGetPhraseLocales();
 
-            for (final String projectId : projectIds)
-            {
-                final List<PhraseLocale> locales = getLocales(projectId);
-                if (locales != null)
-                {
-                    for (final PhraseLocale locale : locales)
-                    {
-                        updateLocale(projectId, locale);
-                    }
-                }
-            }
+            projectIds.stream()
+                .forEach(projectId -> branches.stream()
+                    .forEach(branch -> updateBranchLocales(projectId, branch)));
 
             LOG.info("FINISHED Update Messages");
         }
@@ -115,18 +134,31 @@ public class PhraseAppSyncTask implements Runnable
         }
     }
 
+    private void updateBranchLocales(final String projectId, final String branch)
+    {
+        final List<PhraseLocale> locales = getLocales(projectId, branch);
 
-    private void updateLocale(String projectId, PhraseLocale locale)
+        if (locales != null)
+        {
+            for (final PhraseLocale locale : locales)
+            {
+                updateLocale(projectId, branch, locale);
+            }
+        }
+    }
+
+
+    private void updateLocale(String projectId, String branch, PhraseLocale locale)
     {
         try
         {
-            byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, locale.getId(), format);
+            byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, branch, locale.getId(), format);
             if (translationByteArray == null || translationByteArray.length == 0)
             {
                 LOG.warn("Could not receive any data from PhraseAppApi for locale: {}. Please check configuration in PhraseApp!", locale);
                 translationByteArray = "no.data.received=true".getBytes();
             }
-            fileService.saveToFile(projectId, translationByteArray, locale.getCode().replace('-', '_'));
+            fileService.saveToFile(projectId, branch, translationByteArray, locale.getCode().replace('-', '_'));
         }
         catch (Exception e)
         {
@@ -134,44 +166,46 @@ public class PhraseAppSyncTask implements Runnable
         }
     }
 
-
-    List<PhraseProjectLocale> getPhraseLocales()
+    private List<PhraseLocale> getLocales (final String projectId, final String branch)
     {
-        return phraseLocales;
-    }
+        final Collection<PhraseProject> phraseProjects =
+            Collections2.filter(getPhraseProjects(), phraseProject -> Objects.requireNonNull(phraseProject).getProjectId().equals(projectId));
 
-
-    private List<PhraseLocale> getLocales(final String projectId)
-    {
-        final Collection<PhraseProjectLocale> phrasesProjectLocales = Collections2.filter(
-            getPhraseLocales(),
-            projectLocale -> Objects.requireNonNull(projectLocale).getProjectId().equals(projectId)
-        );
-        if (phrasesProjectLocales.isEmpty())
+        if (phraseProjects.isEmpty())
         {
             LOG.warn("No locales found for projectId: " + projectId);
             return null;
         }
-        final PhraseProjectLocale projectLocale = phrasesProjectLocales.iterator().next();
-        return projectLocale.getLocales();
+        final PhraseProject phraseProject = phraseProjects.iterator().next();
+
+        final Collection<PhraseBranch> phraseBranches =
+            Collections2.filter(phraseProject.getBranches(), phraseBranch -> Objects.requireNonNull(phraseBranch).getBranchName().equals(branch));
+
+        if (phraseBranches.isEmpty())
+        {
+            LOG.warn("No branches found for projectId: " + projectId);
+            return null;
+        }
+
+        final PhraseBranch phraseBranch = phraseBranches.iterator().next();
+        return phraseBranch.getLocales();
     }
 
 
     private void checkAndGetPhraseLocales()
     {
-        if (phraseLocales == null)
+        if (phraseProjects == null)
         {
             initLocales();
         }
     }
 
-
     private void initLocales()
     {
-        LOG.debug("Start: Initialize all locales for projectIds: " + projectIdString);
-        phraseLocales = localeAPI.listLocales(projectIds);
-        LOG.trace("Locales are successfully retreived: " + Joiner.on(",").join(phraseLocales));
-        LOG.debug("End: Initialize all locales for projectIds: " + projectIdString);
+        LOG.debug("Start: Initialize all locales for projectIds: " + projectIdString + " and branches: " + branchesString);
+        phraseProjects = localeAPI.listLocales(projectIds, branches);
+        LOG.trace("Locales are successfully retreived: " + Joiner.on(",").join(phraseProjects));
+        LOG.debug("End: Initialize all locales for projectIds: " + projectIdString + " and branches: " + branchesString);
     }
 
 

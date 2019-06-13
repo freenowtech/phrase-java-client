@@ -4,21 +4,27 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.mytaxi.apis.phrase.api.GenericPhraseAPI;
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
-import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseBranch;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseProject;
 import com.mytaxi.apis.phrase.exception.PhraseAppApiException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import static com.mytaxi.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_BRANCH;
 
 /**
  * Created by m.winkelmann on 30.10.15.
@@ -29,8 +35,8 @@ public class PhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]>
 
     // ---- configuration -----
     private static final String PLACEHOLDER_PROJECT_ID = "{projectid}";
-
     private static final String PHRASE_LOCALES_PATH = "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID + "/locales";
+    private static final String PARAMETER_BRANCH = "branch";
 
 
     public PhraseLocaleAPI(final RestTemplate restTemplate, final String authToken)
@@ -51,61 +57,86 @@ public class PhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]>
     }
 
 
-    public List<PhraseProjectLocale> listLocales(final List<String> projectIds) throws PhraseAppApiException
+    public List<PhraseProject> listLocales(final List<String> projectIds) throws PhraseAppApiException
+    {
+        return listLocales(projectIds, Arrays.asList(DEFAULT_BRANCH));
+    }
+
+
+    public List<PhraseProject> listLocales(final List<String> projectIds, final List<String> branches) throws PhraseAppApiException
     {
         Preconditions.checkNotNull(projectIds, "ProjectIds may not be null.");
 
         String projectIdsString = Joiner.on(",").join(projectIds);
-        LOG.trace("Start to retrieve locales for projectIds: {}", projectIdsString);
+        String branchesString = Joiner.on(",").join(branches);
+        LOG.trace("Start to retrieve locales for projectIds: {}", projectIdsString, " and branches: {}", branchesString);
 
-        ArrayList<PhraseProjectLocale> phraseLocales = new ArrayList<>(projectIds.size());
+        ArrayList<PhraseProject> phraseProjects = new ArrayList<>(projectIds.size());
+
         for (String projectId : projectIds)
         {
-            ResponseEntity<PhraseLocaleDTO[]> responseEntity = null;
-            try
+            ArrayList<PhraseBranch> phraseBranches = new ArrayList<>(branches.size());
+
+            for (String branch : branches)
             {
-                String requestPath = createRequestPath(projectId);
+                ResponseEntity<PhraseLocaleDTO[]> responseEntity = null;
 
-                LOG.trace("Call requestPath: {} to get locales from phrase.", requestPath);
-
-                URIBuilder builder = createUriBuilder(requestPath);
-
-                HttpEntity<Object> requestEntity = createHttpEntity(requestPath);
-
-                URI uri = builder.build();
-
-                responseEntity = requestPhrase(requestEntity, uri, PhraseLocaleDTO[].class);
-
-                PhraseLocaleDTO[] requestedLocales = handleResponse(projectId, requestPath, responseEntity);
-
-                PhraseProjectLocale phraseProjectLocale = PhraseLocaleMapper.makePhraseProjectLocale(projectId, requestedLocales);
-
-                phraseLocales.add(phraseProjectLocale);
-            }
-            catch (HttpClientErrorException e)
-            {
-                e.getResponseHeaders().forEach((key, value) -> LOG.debug("Header : [" + key + "] = " + value));
-                throw new PhraseAppApiException("API execution error", e);
-            }
-            catch (URISyntaxException e)
-            {
-                throw new RuntimeException("Something goes wrong due building of the request URI", e);
-            }
-            finally
-            {
-                if (responseEntity != null)
+                try
                 {
-                    responseEntity.getHeaders().forEach((key, value) -> LOG.debug("Header : [" + key + "] = " + value));
+                    String requestPath = createRequestPath(projectId, branch);
+                    LOG.trace("Call requestPath: {} to get locales from phrase.", requestPath);
+
+                    if (!DEFAULT_BRANCH.equals(branch))
+                    {
+                        final List<NameValuePair> parameters = new ArrayList<>();
+                        parameters.add(new BasicNameValuePair(PARAMETER_BRANCH, branch));
+                    }
+
+                    URIBuilder builder = createUriBuilder(requestPath);
+
+                    HttpEntity<Object> requestEntity = createHttpEntity(requestPath);
+
+                    URI uri = builder.build();
+
+                    responseEntity = requestPhrase(requestEntity, uri, PhraseLocaleDTO[].class);
+
+                    PhraseLocaleDTO[] requestedLocales = handleResponse(projectId, requestPath, responseEntity);
+
+                    PhraseBranch phraseBranch = PhraseLocaleMapper.makePhraseBranch(branch, requestedLocales);
+
+                    phraseBranches.add(phraseBranch);
+
+
+                }
+                catch (HttpClientErrorException e)
+                {
+                    e.getResponseHeaders().forEach((key, value) -> LOG.debug("Header : [" + key + "] = " + value));
+                    throw new PhraseAppApiException("API execution error", e);
+                }
+                catch (URISyntaxException e)
+                {
+                    throw new RuntimeException("Something goes wrong due building of the request URI", e);
+                }
+                finally
+                {
+                    if (responseEntity != null)
+                    {
+                        responseEntity.getHeaders().forEach((key, value) -> LOG.debug("Header : [" + key + "] = " + value));
+                    }
                 }
             }
+
+            PhraseProject phraseProject = PhraseLocaleMapper.makePhraseProject(projectId, phraseBranches);
+
+            phraseProjects.add(phraseProject);
         }
 
-        LOG.trace("Successfully retrieved {} locales for projectIds: {}", phraseLocales.size(), projectIdsString);
-        return phraseLocales;
+        LOG.trace("Successfully retrieved {} locales for projectIds: {}", phraseProjects.size(), projectIdsString);
+        return phraseProjects;
     }
 
 
-    private String createRequestPath(String projectId)
+    private String createRequestPath(String projectId, String branch)
     {
         Map<String, String> placeholders = new HashMap<>();
         placeholders.put(PLACEHOLDER_PROJECT_ID, projectId);

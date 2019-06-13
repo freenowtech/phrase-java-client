@@ -1,19 +1,35 @@
 package com.mytaxi.apis.phrase.api.locale;
 
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseBranch;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseLocale;
-import com.mytaxi.apis.phrase.domainobject.locale.PhraseProjectLocale;
+import com.mytaxi.apis.phrase.domainobject.locale.PhraseProject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PhraseLocaleMapper
 {
-    public static PhraseProjectLocale makePhraseProjectLocale(String projectId, PhraseLocaleDTO[] requestedLocales)
+    public static PhraseProject makePhraseProject(String projectId, List<PhraseBranch> branches)
     {
-        return PhraseProjectLocale.newBuilder()
+        return PhraseProject.newBuilder()
             .withProjectId(projectId)
+            .withBranches(branches)
+            .build();
+    }
+
+
+    public static PhraseBranch makePhraseBranch(String branch, PhraseLocaleDTO[] requestedLocales)
+    {
+        return PhraseBranch.newBuilder()
+            .withBranchName(branch)
             .withLocales(makePhraseLocales(requestedLocales))
             .build();
+    }
+
+
+    public static PhraseLocale makePhraseLocale(PhraseLocaleDTO localeDTO)
+    {
+        return PhraseLocale.newBuilder().withId(localeDTO.getId()).withName(localeDTO.getName()).withCode(localeDTO.getCode()).build();
     }
 
 
@@ -25,11 +41,5 @@ public class PhraseLocaleMapper
             locales.add(makePhraseLocale(localeDTO));
         }
         return locales;
-    }
-
-
-    public static PhraseLocale makePhraseLocale(PhraseLocaleDTO localeDTO)
-    {
-        return PhraseLocale.newBuilder().withId(localeDTO.getId()).withName(localeDTO.getName()).withCode(localeDTO.getCode()).build();
     }
 }

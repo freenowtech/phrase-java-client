@@ -7,6 +7,7 @@ import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +33,16 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
 
     private static final String PLACEHOLDER_LOCALE_ID = "{localeid}";
 
-    private static final String PLACEHOLDER_FILEFORMAT = "file_format";
+    private static final String PARAMETER_FILEFORMAT = "file_format";
 
-    private static final String PHRASE_LOCALES_DOWNLOAD_PATH =
-        "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID + "/locales/" + PLACEHOLDER_LOCALE_ID + "/download";
+    private static final String PARAMETER_BRANCH = "branch";
+
+    private static final String PHRASE_LOCALES_DOWNLOAD_PATH = "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID +
+        "/locales/" + PLACEHOLDER_LOCALE_ID + "/download";
 
     public static final Format DEFAULT_FILE_FORMAT = JavaPropertiesFormat.newBuilder().build();
+
+    public static final String DEFAULT_BRANCH = "master";
 
 
     protected PhraseLocaleDownloadAPI(final RestTemplate restTemplate, final String authToken)
@@ -51,6 +56,7 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
         super(createRestTemplateWithConverter(), authToken);
     }
 
+
     public PhraseLocaleDownloadAPI(final String authToken, final String scheme, final String host)
     {
         super(createRestTemplateWithConverter(), scheme, host, authToken);
@@ -59,11 +65,16 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
 
     public byte[] downloadLocale(final String projectId, final String localeId)
     {
-        return downloadLocale(projectId, localeId, DEFAULT_FILE_FORMAT);
+        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, DEFAULT_FILE_FORMAT);
     }
 
 
     public byte[] downloadLocale(final String projectId, final String localeId, final Format format)
+    {
+        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, format);
+    }
+
+    public byte[] downloadLocale(final String projectId, final String branch, final String localeId, final Format format)
     {
         Preconditions.checkNotNull(projectId, "ProjectIds may not be null.");
         Preconditions.checkNotNull(format, "format may not be null.");
@@ -76,9 +87,14 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
 
             LOG.trace("Call requestPath: {} to get locales from phrase.", requestPath);
 
-            final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair(PLACEHOLDER_FILEFORMAT, format.getName()));
+            final List<NameValuePair> parameters = new ArrayList<>();
+            parameters.add(new BasicNameValuePair(PARAMETER_FILEFORMAT, format.getName()));
             parameters.addAll(format.getOptions());
+
+            if (!DEFAULT_BRANCH.equals(branch))
+            {
+                parameters.add(new BasicNameValuePair(PARAMETER_BRANCH, branch));
+            }
 
             final URIBuilder builder = createUriBuilder(requestPath, parameters);
 
@@ -100,9 +116,10 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
 
     private String createDownloadLocaleRequestPath(final String projectId, final String localeId)
     {
-        final Map<String, String> placeholders = new HashMap<String, String>();
+        final Map<String, String> placeholders = new HashMap<>();
         placeholders.put(PLACEHOLDER_PROJECT_ID, projectId);
         placeholders.put(PLACEHOLDER_LOCALE_ID, localeId);
+
         return createPath(PHRASE_LOCALES_DOWNLOAD_PATH, placeholders);
     }
 

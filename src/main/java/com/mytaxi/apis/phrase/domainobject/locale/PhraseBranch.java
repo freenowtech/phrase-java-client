@@ -3,22 +3,22 @@ package com.mytaxi.apis.phrase.domainobject.locale;
 import java.util.List;
 import java.util.Objects;
 
-public class PhraseProjectLocale
+public class PhraseBranch
 {
-    private String projectId;
+    private String branchName;
     private List<PhraseLocale> locales;
 
 
-    private PhraseProjectLocale(String projectId, List<PhraseLocale> locales)
+    private PhraseBranch(String branchName, List<PhraseLocale> locales)
     {
-        this.projectId = projectId;
+        this.branchName = branchName;
         this.locales = locales;
     }
 
 
-    public String getProjectId()
+    public String getBranchName()
     {
-        return projectId;
+        return branchName;
     }
 
 
@@ -28,35 +28,35 @@ public class PhraseProjectLocale
     }
 
 
-    public static Builder newBuilder()
+    public static PhraseBranch.Builder newBuilder()
     {
-        return new Builder();
+        return new PhraseBranch.Builder();
     }
 
 
     public static class Builder
     {
-        private String projectId;
+        private String branchName;
         private List<PhraseLocale> locales;
 
 
-        public Builder withProjectId(String projectId)
+        public PhraseBranch.Builder withBranchName(String branchName)
         {
-            this.projectId = projectId;
+            this.branchName = branchName;
             return this;
         }
 
 
-        public Builder withLocales(List<PhraseLocale> locales)
+        public PhraseBranch.Builder withLocales(List<PhraseLocale> locales)
         {
             this.locales = locales;
             return this;
         }
 
 
-        public PhraseProjectLocale build()
+        public PhraseBranch build()
         {
-            return new PhraseProjectLocale(projectId, locales);
+            return new PhraseBranch(branchName, locales);
         }
     }
 
@@ -72,8 +72,8 @@ public class PhraseProjectLocale
         {
             return false;
         }
-        PhraseProjectLocale that = (PhraseProjectLocale) o;
-        return Objects.equals(projectId, that.projectId) &&
+        PhraseBranch that = (PhraseBranch) o;
+        return Objects.equals(branchName, that.branchName) &&
             Objects.equals(locales, that.locales);
     }
 
@@ -81,16 +81,17 @@ public class PhraseProjectLocale
     @Override
     public int hashCode()
     {
-        return Objects.hash(projectId, locales);
+        return Objects.hash(branchName, locales);
     }
 
 
     @Override
     public String toString()
     {
-        return "PhraseProjectLocale{" +
-            "projectId='" + projectId + '\'' +
+        return "PhraseBranch{" +
+            "branchName='" + branchName + '\'' +
             ", locales=" + locales +
             '}';
     }
 }
+
