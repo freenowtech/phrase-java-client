@@ -124,12 +124,24 @@ public class PhraseTranslationAPITest
 
         String localeIdDe = cfg.localeIdDe();
 
+        List<String> branches = cfg.branches();
+
         // WHEN
         List<PhraseTranslation> phraseTranslations = translationAPI.listTranslations(projectId, localeIdDe);
+        List<PhraseTranslation> phraseTranslationsForBranch = translationAPI.listTranslations(projectId, branches.get(0), localeIdDe);
 
         // THEN
         Assert.assertNotNull("PhraseTranslations must not be null", phraseTranslations);
         Assert.assertTrue("PhraseTranslations must not be empty", phraseTranslations.size() > 0);
+        Assert.assertNotNull("PhraseTranslations must not be null", phraseTranslationsForBranch);
+        Assert.assertTrue("PhraseTranslations must not be empty", phraseTranslationsForBranch.size() > 0);
+
+        checkAndVerifyTranslations(phraseTranslations);
+        checkAndVerifyTranslations(phraseTranslationsForBranch);
+    }
+    
+    private void checkAndVerifyTranslations(List<PhraseTranslation> phraseTranslations)
+    {
         for (PhraseTranslation translation : phraseTranslations)
         {
             String id = translation.getId();
@@ -140,5 +152,4 @@ public class PhraseTranslationAPITest
             Assert.assertNotNull(key);
         }
     }
-
 }
