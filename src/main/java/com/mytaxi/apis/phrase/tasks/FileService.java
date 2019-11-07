@@ -30,20 +30,6 @@ class FileService
     private static final String PROJECT_ID_PLACEHOLDER = "{projectid}";
     private static final String BRANCH_PLACEHOLDER = "{branch}";
 
-
-    FileService()
-    {
-        try
-        {
-            generatedResourcesFoldername = new ClassPathResource("/").getFile().getPath();
-        }
-        catch (final Exception e)
-        {
-            LOG.error("could not get default ClassPathResource. use /generated-resources/ instead");
-        }
-    }
-
-
     public void saveToFile(final String projectId, final byte[] translationByteArray, final String locale) throws IOException
     {
         saveToFile(projectId, MASTER_BRANCH, translationByteArray, locale);
@@ -82,7 +68,7 @@ class FileService
 
     private void initMessageDirectory() throws IOException
     {
-        messagesDirectory = Paths.get(firstNonNull(generatedResourcesFoldername, GENERATED_RESOURCES_FOLDERNAME));
+        messagesDirectory = Paths.get(firstNonNull(getGeneratedResourcesFoldername(), GENERATED_RESOURCES_FOLDERNAME));
         Files.createDirectories(messagesDirectory);
     }
 
@@ -152,6 +138,18 @@ class FileService
 
     public String getGeneratedResourcesFoldername()
     {
+        if (generatedResourcesFoldername == null)
+        {
+            try
+            {
+                generatedResourcesFoldername = new ClassPathResource("/").getFile().getPath();
+            }
+            catch (final Exception e)
+            {
+                LOG.error("could not get default ClassPathResource. use /generated-resources/ instead");
+            }
+        }
+
         return generatedResourcesFoldername;
     }
 
