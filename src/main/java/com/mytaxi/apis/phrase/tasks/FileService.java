@@ -39,7 +39,7 @@ class FileService
         }
         catch (final Exception e)
         {
-            LOG.error("could not get default ClassPathResource. use /generated-resources/ instead");
+            LOG.warn("could not get default ClassPathResource. use /generated-resources/ instead");
         }
     }
 
