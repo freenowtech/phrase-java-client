@@ -35,7 +35,6 @@ public class PhraseAppSyncTaskTest
 
 
     @Test
-    @Ignore
     public void testJavaPropertiesFormat_escapeSingleQuotesTrue() throws Exception
     {
         JavaPropertiesFormat format = JavaPropertiesFormat.newBuilder()
@@ -52,7 +51,6 @@ public class PhraseAppSyncTaskTest
 
 
     @Test
-    @Ignore
     public void testJavaPropertiesFormat_escapeSingleQuotesFalse() throws Exception
     {
         JavaPropertiesFormat format = JavaPropertiesFormat.newBuilder()

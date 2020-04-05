@@ -53,6 +53,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.isadounikau</groupId>
+            <artifactId>phrase-client</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
