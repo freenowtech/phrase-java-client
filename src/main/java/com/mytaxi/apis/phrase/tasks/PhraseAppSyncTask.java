@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
@@ -100,7 +99,7 @@ public class PhraseAppSyncTask implements Runnable
 
     public PhraseAppSyncTask(final String authToken, final String projectId, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI, FileService fileService)
     {
-        this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), localeApi, localeDownloadAPI, fileService);
+        this(authToken, projectId, Collections.singletonList(DEFAULT_BRANCH), localeApi, localeDownloadAPI, fileService);
     }
 
 
