@@ -15,7 +15,6 @@ import java.util.Properties;
 import java.util.UUID;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +34,6 @@ public class PhraseAppSyncTaskTest
 
 
     @Test
-    @Ignore
     public void testJavaPropertiesFormat_escapeSingleQuotesTrue() throws Exception
     {
         JavaPropertiesFormat format = JavaPropertiesFormat.newBuilder()
@@ -52,7 +50,6 @@ public class PhraseAppSyncTaskTest
 
 
     @Test
-    @Ignore
     public void testJavaPropertiesFormat_escapeSingleQuotesFalse() throws Exception
     {
         JavaPropertiesFormat format = JavaPropertiesFormat.newBuilder()
