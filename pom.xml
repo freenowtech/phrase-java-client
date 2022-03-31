@@ -49,7 +49,7 @@
         <mavenVersion>2.0.9</mavenVersion>
         <scm.connection>scm:git:git@github.com:mytaxi/phrase-java-client.git</scm.connection>
         <scm.url>https://github.com/mytaxi/phrase-java-client</scm.url>
-        <spring.version>3.2.15.RELEASE</spring.version>
+        <spring.version>5.3.18</spring.version>
     </properties>
 
     <dependencies>
