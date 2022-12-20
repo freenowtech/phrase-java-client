@@ -1,0 +1,15 @@
+[
+  {
+    "id": "4e80a956a92a5b3f65b6dc6edd85927f",
+    "content": "Buchung stornieren",
+    "locale": {
+      "id": "loc-1234",
+      "name": "DE",
+      "code": "de"
+    },
+    "key": {
+      "id": "b4977ac14b42876f364fac19dbc1acf6",
+      "name": "booking_fare.fare_confirmation_dialog.btn_cancel_text"
+    }
+  }
+]

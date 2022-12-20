@@ -1,0 +1,20 @@
+[
+  {
+    "id": "loc-1234",
+    "name": "DE",
+    "code": "de",
+    "default": false,
+    "rtl": false,
+    "createdAt": "2019-05-23T10:40:03.000+00:00",
+    "updatedAt": "2022-12-15T10:58:09.000+00:00"
+  },
+  {
+    "id": "loc-5678",
+    "name": "EN_Source",
+    "code": "en",
+    "default": true,
+    "rtl": false,
+    "createdAt": "2019-05-23T10:38:04.000+00:00",
+    "updatedAt": "2022-12-15T16:02:13.000+00:00"
+  }
+]

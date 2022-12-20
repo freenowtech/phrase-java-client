@@ -1,5 +1,6 @@
 package com.mytaxi.apis.phrase.api.locale;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import com.mytaxi.apis.phrase.domainobject.locale.PhraseBranch;
@@ -10,6 +11,7 @@ import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -20,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -32,6 +35,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class PhraseLocaleAPITest
 {
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(options().port(9999));
 
     private RestTemplate restTemplate;
 
@@ -58,7 +63,10 @@ public class PhraseLocaleAPITest
     {
         // GIVEN
         String authToken = cfg.authToken();
-        PhraseLocaleAPI phraseAppApiV2 = new PhraseLocaleAPI(authToken);
+        String host = cfg.host();
+        String scheme = cfg.scheme();
+
+        PhraseLocaleAPI phraseAppApiV2 = new PhraseLocaleAPI(authToken, scheme, host);
 
         String projectId = cfg.projectId();
         List<String> branches = cfg.branches();
@@ -101,8 +109,10 @@ public class PhraseLocaleAPITest
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
         List<String> branches = cfg.branches();
+        String host = cfg.host();
+        String scheme = cfg.scheme();
 
-        PhraseLocaleAPI phraseLocaleAPI = Mockito.spy(new PhraseLocaleAPI(authToken));
+        PhraseLocaleAPI phraseLocaleAPI = Mockito.spy(new PhraseLocaleAPI(authToken, scheme, host));
 
         // WHEN doing two request
         List<PhraseProject> phraseProject1 = phraseLocaleAPI.listLocales(Collections.singletonList(projectId), branches);
