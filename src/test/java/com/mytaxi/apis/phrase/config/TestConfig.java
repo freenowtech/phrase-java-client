@@ -8,21 +8,21 @@ import org.aeonbits.owner.Config;
  */
 public interface TestConfig extends Config
 {
-    @DefaultValue("${ENV_PHRASE_AUTHTOKEN}")
+    @DefaultValue("token-1234")
     String authToken();
 
-    @DefaultValue("${ENV_PHRASE_PROJECTID}")
+    @DefaultValue("proj-1234")
     String projectId();
 
-    @DefaultValue("${ENV_PHRASE_BRANCHES}")
+    @DefaultValue("master")
     List<String> branches();
 
-    @DefaultValue("${ENV_PHRASE_LOCALEID_DE}")
+    @DefaultValue("loc-1234")
     String localeIdDe();
 
-    @DefaultValue("${ENV_PHRASE_HOST}")
+    @DefaultValue("localhost:9999")
     String host();
 
-    @DefaultValue("${ENV_PHRASE_SCHEME}")
+    @DefaultValue("http")
     String scheme();
 }

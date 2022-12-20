@@ -1,5 +1,6 @@
 package com.mytaxi.apis.phrase.tasks;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableList;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
@@ -16,14 +17,18 @@ import java.util.UUID;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class PhraseAppSyncTaskTest
 {
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(options().port(9999));
     private TestConfig cfg;
 
 
@@ -75,7 +80,7 @@ public class PhraseAppSyncTaskTest
         String uuid = UUID.randomUUID().toString();
 
         //
-        PhraseAppSyncTask phraseAppSyncTask = new PhraseAppSyncTask(cfg.authToken(), cfg.projectId());
+        PhraseAppSyncTask phraseAppSyncTask = new PhraseAppSyncTask(cfg.authToken(), cfg.projectId(), cfg.scheme(), cfg.host());
         phraseAppSyncTask.setMessagesFoldername(uuid);
         phraseAppSyncTask.setFormat(format);
         phraseAppSyncTask.run();

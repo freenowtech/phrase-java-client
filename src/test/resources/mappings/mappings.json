@@ -1,0 +1,76 @@
+{
+  "mappings": [
+    {
+      "name": "get-locales",
+      "request": {
+        "url": "/api/v2/projects/proj-1234/locales",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "get-locales-res.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "name": "get-locale-properties",
+      "request": {
+        "urlPath": "/api/v2/projects/proj-1234/locales/loc-1234/download",
+        "queryParameters": {
+          "file_format": {
+            "equalTo": "properties"
+          }
+        },
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "get-locale-properties-res.properties",
+        "headers": {
+          "Content-Type": "application/octet-stream",
+          "Date": "Tue, 20 Dec 2022 15:36:46 GMT"
+        }
+      },
+      "scenarioName": "Download Locales",
+      "requiredScenarioState": "Started",
+      "newScenarioState": "Not Modified"
+    },
+    {
+      "name": "get-locale-properties-not-modified",
+      "request": {
+        "urlPath": "/api/v2/projects/proj-1234/locales/loc-1234/download",
+        "queryParameters": {
+          "file_format": {
+            "equalTo": "properties"
+          }
+        },
+        "method": "GET"
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "Date": "Tue, 20 Dec 2022 15:36:46 GMT"
+        }
+      },
+      "scenarioName": "Download Locales",
+      "requiredScenarioState": "Not Modified"
+    },
+    {
+      "id": "5014bb4b-a52e-4928-97e6-43e95a8c6ec2",
+      "name": "get-translations",
+      "request": {
+        "url": "/api/v2/projects/proj-1234/locales/loc-1234/translations",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "get-translations-res.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}

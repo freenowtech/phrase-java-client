@@ -1,5 +1,6 @@
 package com.mytaxi.apis.phrase.api.translation;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.mytaxi.apis.phrase.api.locale.dto.PhraseLocaleDTO;
 import com.mytaxi.apis.phrase.api.translation.dto.PhraseKeyDTO;
 import com.mytaxi.apis.phrase.api.translation.dto.PhraseTranslationDTO;
@@ -12,6 +13,7 @@ import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -22,11 +24,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+
 /**
  * Created by m.winkelmann on 05.11.15.
  */
 public class PhraseTranslationAPITestNew
 {
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(options().port(9999));
     private RestTemplate restTemplate;
 
     private PhraseTranslationAPI translationAPI;

@@ -1,13 +1,16 @@
 package com.mytaxi.apis.phrase.api.localedownload;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -15,6 +18,8 @@ import static org.junit.Assert.assertNotNull;
  */
 public class PhraseLocaleDownloadAPITestNew
 {
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(options().port(9999));
 
     private TestConfig cfg;
 

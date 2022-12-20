@@ -1,11 +1,13 @@
 package com.mytaxi.apis.phrase.api.localedownload;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.mytaxi.apis.phrase.api.format.Format;
 import com.mytaxi.apis.phrase.api.format.JavaPropertiesFormat;
 import com.mytaxi.apis.phrase.config.TestConfig;
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -15,9 +17,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -26,6 +28,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class PhraseLocaleDownloadAPITest
 {
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(options().port(9999));
 
     @Captor
     ArgumentCaptor<ResponseEntity<byte[]>> responseEntityCaptor;
@@ -47,8 +51,10 @@ public class PhraseLocaleDownloadAPITest
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
+        String host = cfg.host();
+        String scheme = cfg.scheme();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
 
         // WHEN
         byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -64,8 +70,10 @@ public class PhraseLocaleDownloadAPITest
         String authToken = cfg.authToken();
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
+        String host = cfg.host();
+        String scheme = cfg.scheme();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = Mockito.spy(new PhraseLocaleDownloadAPI(authToken));
+        PhraseLocaleDownloadAPI localeDownloadAPI = Mockito.spy(new PhraseLocaleDownloadAPI(authToken, scheme, host));
 
         // WHEN doing two request
         byte[] fileBytes1 = localeDownloadAPI.downloadLocale(projectId, localeIdDe);
@@ -74,7 +82,7 @@ public class PhraseLocaleDownloadAPITest
         // THEN assert same result
         assertNotNull(fileBytes1);
         assertNotNull(fileBytes2);
-        assertEquals(fileBytes1, fileBytes2);
+        assertArrayEquals(fileBytes1, fileBytes2);
 
         // AND assert status codes 200 and 304 to verify E-Tag handling
         verify(localeDownloadAPI, times(2)).handleResponse(eq(projectId), anyString(), responseEntityCaptor.capture());
@@ -94,8 +102,10 @@ public class PhraseLocaleDownloadAPITest
         String projectId = cfg.projectId();
         String localeIdDe = cfg.localeIdDe();
         List<String> branches = cfg.branches();
+        String host = cfg.host();
+        String scheme = cfg.scheme();
 
-        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
 
         Format format = JavaPropertiesFormat.newBuilder()
             .setEscapeSingleQuotes(false)
