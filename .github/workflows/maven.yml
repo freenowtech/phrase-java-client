@@ -27,7 +27,7 @@ jobs:
       - run: mvn -B verify -Dgpg.skip=true
 
   release:
-    if: contains(github.ref, 'master') && startsWith(github.event.head_commit.message, '[release]')
+    if: contains(github.ref, 'release') && startsWith(github.event.head_commit.message, '[release]')
     runs-on: ubuntu-latest
     needs: [build]
     name: Release
@@ -69,7 +69,7 @@ jobs:
           maven-repo-server-id: ossrh
           maven-repo-server-username: ${{ secrets.FREE_NOW_GITHUB_USER }}
           maven-repo-server-password: ${{ secrets.FREE_NOW_MAVEN_ACCESS_TOKEN }}
-          maven-args: "-DskipTests -DskipITs"
+          maven-args: "-P release -X -DskipTests -DskipITs"
 
         env:
           JAVA_HOME: /usr/lib/jvm/java-1.8-openjdk/
