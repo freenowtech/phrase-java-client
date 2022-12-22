@@ -53,6 +53,7 @@ jobs:
       - name: Release and Publish
         uses: qcastel/github-actions-maven-release@v1.12.25
         with:
+          access-token: ${{ secrets.FREE_NOW_GITHUB_ACCESS_TOKEN }}
           release-branch-name: ${{ env.BRANCH_NAME }}
 
           gpg-enabled: true
@@ -69,7 +70,7 @@ jobs:
           maven-repo-server-id: ossrh
           maven-repo-server-username: ${{ secrets.FREE_NOW_GITHUB_USER }}
           maven-repo-server-password: ${{ secrets.FREE_NOW_MAVEN_ACCESS_TOKEN }}
-          maven-args: "-P release -X -DskipTests -DskipITs"
+          maven-args: "-DskipTests -DskipITs"
 
         env:
           JAVA_HOME: /usr/lib/jvm/java-1.8-openjdk/
