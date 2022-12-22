@@ -1,6 +1,6 @@
 # Phrase-Java-Client 
-[![Build Status](https://travis-ci.org/mytaxi/phrase-java-client.svg?branch=master)](https://travis-ci.org/mytaxi/phrase-java-client)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.mytaxi.apis/phrase-java-client/badge.svg?x=1)](https://maven-badges.herokuapp.com/maven-central/com.mytaxi.apis/phrase-java-client)
+[![Build Status](https://github.com/freenowtech/phrase-java-client/actions/workflows/maven.yml/badge.svg?query=branch%3Amaster)](https://github.com/freenowtech/phrase-java-client/actions?query=branch%3Amaster)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.free-now.apis/phrase-java-client/badge.svg?x=1)](https://maven-badges.herokuapp.com/maven-central/com.free-now.apis/phrase-java-client)
 ## What is this?
 This projects contains of services to handle the translations from [PhraseApp API v2](http://docs.phraseapp.com/api/v2/).
 It's supposed to expose Phrase translations as POJO or as File within the java world.
@@ -16,9 +16,9 @@ Currently this project is not released in the maven central repository.
 Please install this dependency to your local repository and include the following dependency:
 ```
 <dependency>
-    <groupId>com.mytaxi.apis</groupId>
+    <groupId>com.free-now.apis</groupId>
     <artifactId>phrase-java-client</artifactId>
-    <version>1.0.4</version>
+    <version>${phrase-java-client.version}</version>
 </dependency>
 ```
 
