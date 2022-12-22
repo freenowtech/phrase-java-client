@@ -8,7 +8,7 @@
     <name>phrase-api</name>
     <description>This projects contains of services to handle the translations from [PhraseApp API
         v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.</description>
-    <url>https://github.com/mytaxi/phrase-java-client</url>
+    <url>https://github.com/freenowtech/phrase-java-client</url>
 
     <licenses>
         <license>
@@ -20,8 +20,8 @@
     <developers>
         <developer>
             <name>Jan Sören Ramm</name>
-            <organization>Intelligent Apps GmbH - mytaxi</organization>
-            <organizationUrl>http://www.mytaxi.com</organizationUrl>
+            <organization>Intelligent Apps GmbH - Free Now</organization>
+            <organizationUrl>http://www.free-now.com</organizationUrl>
         </developer>
     </developers>
 
@@ -47,8 +47,8 @@
         <jackson.version>[2.7.0,2.8.0)</jackson.version>
         <javaVersion>1.8</javaVersion>
         <mavenVersion>2.0.9</mavenVersion>
-        <scm.connection>scm:git:git@github.com:mytaxi/phrase-java-client.git</scm.connection>
-        <scm.url>https://github.com/mytaxi/phrase-java-client</scm.url>
+        <scm.connection>scm:git:git@github.com:freenowtech/phrase-java-client.git</scm.connection>
+        <scm.url>https://github.com/freenowtech/phrase-java-client</scm.url>
         <spring.version>3.2.15.RELEASE</spring.version>
     </properties>
 
