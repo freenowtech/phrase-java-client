@@ -4,7 +4,7 @@
 
     <groupId>com.free-now.apis</groupId>
     <artifactId>phrase-java-client</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1-SNAPSHOT</version>
     <name>phrase-api</name>
     <description>This projects contains of services to handle the translations from [PhraseApp API
         v2](http://docs.phraseapp.com/api/v2/). It's supposed to expose Phrase translations as POJO or as File within the java world.</description>
@@ -28,7 +28,7 @@
     <scm>
         <connection>scm:git:git@github.com:freenowtech/phrase-java-client.git</connection>
         <developerConnection>scm:git:git@github.com:freenowtech/phrase-java-client.git</developerConnection>
-        <tag>phrase-java-client-2.1.0</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/freenowtech/phrase-java-client</url>
     </scm>
 
