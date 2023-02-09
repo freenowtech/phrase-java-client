@@ -2,7 +2,6 @@ package com.freenow.apis.phrase.api.locale;
 
 import com.freenow.apis.phrase.api.GenericPhraseAPI;
 import com.freenow.apis.phrase.api.locale.dto.PhraseLocaleDTO;
-import com.freenow.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI;
 import com.freenow.apis.phrase.domainobject.locale.PhraseBranch;
 import com.freenow.apis.phrase.domainobject.locale.PhraseProject;
 import com.google.common.base.Joiner;
@@ -24,6 +23,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import static com.freenow.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_BRANCH;
 
 /**
  * Created by m.winkelmann on 30.10.15.
@@ -58,7 +59,7 @@ public class PhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]>
 
     public List<PhraseProject> listLocales(final List<String> projectIds) throws PhraseAppApiException
     {
-        return listLocales(projectIds, Arrays.asList(PhraseLocaleDownloadAPI.DEFAULT_BRANCH));
+        return listLocales(projectIds, Arrays.asList(DEFAULT_BRANCH));
     }
 
 
@@ -85,7 +86,7 @@ public class PhraseLocaleAPI extends GenericPhraseAPI<PhraseLocaleDTO[]>
                     String requestPath = createRequestPath(projectId, branch);
                     LOG.trace("Call requestPath: {} to get locales from phrase.", requestPath);
 
-                    if (!PhraseLocaleDownloadAPI.DEFAULT_BRANCH.equals(branch))
+                    if (!DEFAULT_BRANCH.equals(branch))
                     {
                         final List<NameValuePair> parameters = new ArrayList<>();
                         parameters.add(new BasicNameValuePair(PARAMETER_BRANCH, branch));
