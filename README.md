@@ -22,6 +22,8 @@ Please install this dependency to your local repository and include the followin
 </dependency>
 ```
 
+**Note:** Starting with version 2.0.0, the root package has been changed from `com.mytaxi.apis.phrase` to 
+`com.freenow.apis.phrase` and all usages of the library must be updated to the new package.
 
 ## What you have to do to start it in an spring application?
 
