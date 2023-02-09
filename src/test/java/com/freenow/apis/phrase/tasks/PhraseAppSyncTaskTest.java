@@ -8,6 +8,7 @@ import com.freenow.apis.phrase.config.TestConfig;
 import com.freenow.apis.phrase.domainobject.locale.PhraseBranch;
 import com.freenow.apis.phrase.domainobject.locale.PhraseLocale;
 import com.freenow.apis.phrase.domainobject.locale.PhraseProject;
+import com.freenow.apis.phrase.exception.PhraseAppSyncTaskException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.junit.rules.ExpectedException;
 
 public class PhraseAppSyncTaskTest
 {
@@ -70,6 +72,25 @@ public class PhraseAppSyncTaskTest
         );
 
         testRun(format, expectedEntries);
+    }
+
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Test
+    public void testInvalidBaseURL()
+    {
+        exceptionRule.expect(PhraseAppSyncTaskException.class);
+        exceptionRule.expectMessage("Parsing base URL failed");
+        new PhraseAppSyncTask(cfg.authToken(), cfg.projectId(), "https://phrase.local/api[]");
+    }
+
+    @Test
+    public void testInvalidBaseURLScheme()
+    {
+        exceptionRule.expect(PhraseAppSyncTaskException.class);
+        exceptionRule.expectMessage("Expect scheme in base URL to be 'http' or 'https', was 'htttps'");
+        new PhraseAppSyncTask(cfg.authToken(), cfg.projectId(), "htttps://phrase.local/api");
     }
 
 

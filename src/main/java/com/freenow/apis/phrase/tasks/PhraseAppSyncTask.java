@@ -10,6 +10,7 @@ import com.freenow.apis.phrase.domainobject.locale.PhraseBranch;
 import com.freenow.apis.phrase.domainobject.locale.PhraseLocale;
 import com.freenow.apis.phrase.domainobject.locale.PhraseProject;
 import com.freenow.apis.phrase.exception.PhraseAppApiException;
+import com.freenow.apis.phrase.exception.PhraseAppSyncTaskException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -110,11 +111,20 @@ public class PhraseAppSyncTask implements Runnable
      * @param projectId ID of the project in Phrase
      * @param branches List of branches in Phrase to query
      * @param baseURL Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
-     * @throws URISyntaxException If parsing of {@code baseURL} fails
      */
-    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, final String baseURL) throws URISyntaxException
+    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, final String baseURL)
     {
-        URI uri = new URI(baseURL);
+        URI uri;
+        try {
+            uri = new URI(baseURL);
+        } catch (URISyntaxException e) {
+            throw new PhraseAppSyncTaskException("Parsing base URL failed", e);
+        }
+
+        if (!uri.getScheme().equals("http") && !uri.getScheme().equals("https")) {
+            throw new PhraseAppSyncTaskException("Expect scheme in base URL to be 'http' or 'https', was '"+ uri.getScheme() +"'");
+        }
+
         String host = baseURL.replace(uri.getScheme() + "://", "");
         projectIds = Collections.singletonList(projectId);
         this.branches = branches;
@@ -133,9 +143,8 @@ public class PhraseAppSyncTask implements Runnable
      * @param authToken Phrase auth token
      * @param projectId ID of the project in Phrase
      * @param baseURL Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
-     * @throws URISyntaxException If parsing of {@code baseURL} fails
      */
-    public PhraseAppSyncTask(final String authToken, final String projectId, final String baseURL) throws URISyntaxException
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String baseURL)
     {
         this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), baseURL);
     }
