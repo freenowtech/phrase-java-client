@@ -117,7 +117,7 @@ public class PhraseAppSyncTask implements Runnable
         URI uri;
         try {
             uri = new URI(baseURL);
-        } catch (URISyntaxException e) {
+        } catch (NullPointerException | URISyntaxException e) {
             throw new PhraseAppSyncTaskException("Parsing base URL failed", e);
         }
 
