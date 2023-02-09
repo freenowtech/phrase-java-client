@@ -26,10 +26,10 @@
     </developers>
 
     <scm>
-        <connection>${scm.connection}</connection>
-        <developerConnection>${scm.connection}</developerConnection>
-        <tag>phrase-java-client-1.0.6</tag>
-        <url>${scm.url}</url>
+        <connection>scm:git:git@github.com:freenowtech/phrase-java-client.git</connection>
+        <developerConnection>scm:git:git@github.com:freenowtech/phrase-java-client.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/freenowtech/phrase-java-client</url>
     </scm>
 
     <distributionManagement>
@@ -47,8 +47,6 @@
         <jackson.version>[2.7.0,2.8.0)</jackson.version>
         <javaVersion>1.8</javaVersion>
         <mavenVersion>2.0.9</mavenVersion>
-        <scm.connection>scm:git:git@github.com:freenowtech/phrase-java-client.git</scm.connection>
-        <scm.url>https://github.com/freenowtech/phrase-java-client</scm.url>
         <spring.version>3.2.15.RELEASE</spring.version>
     </properties>
 
