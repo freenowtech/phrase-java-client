@@ -52,7 +52,7 @@ Please install this dependency to your local repository and include the followin
     }
 
 ## Developers
-In order to make the test work create a file `/src/test/resources/com/mytaxi/phraseapi/config/TestConfig.properties` with the content
+In order to make the test work create a file `/src/test/resources/com/freenow/phraseapi/config/TestConfig.properties` with the content
 ```properties
 authToken=<authToken>
 projectId=<projectId>
