@@ -78,7 +78,7 @@ public class PhraseAppSyncTaskTest
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
-    public void testInvalidBaseURL()
+    public void testConstructor_invalidBaseURL()
     {
         exceptionRule.expect(PhraseAppSyncTaskException.class);
         exceptionRule.expectMessage("Parsing base URL failed");
@@ -86,11 +86,19 @@ public class PhraseAppSyncTaskTest
     }
 
     @Test
-    public void testInvalidBaseURLScheme()
+    public void testConstructor_invalidBaseURLScheme()
     {
         exceptionRule.expect(PhraseAppSyncTaskException.class);
         exceptionRule.expectMessage("Expect scheme in base URL to be 'http' or 'https', was 'htttps'");
         new PhraseAppSyncTask(cfg.authToken(), cfg.projectId(), "htttps://phrase.local/api");
+    }
+
+    @Test
+    public void testConstructor_baseURLNull()
+    {
+        exceptionRule.expect(PhraseAppSyncTaskException.class);
+        exceptionRule.expectMessage("Parsing base URL failed");
+        new PhraseAppSyncTask(cfg.authToken(), cfg.projectId(), null);
     }
 
 
