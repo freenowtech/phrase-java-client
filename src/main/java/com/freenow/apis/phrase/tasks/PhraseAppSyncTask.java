@@ -10,6 +10,8 @@ import com.freenow.apis.phrase.domainobject.locale.PhraseBranch;
 import com.freenow.apis.phrase.domainobject.locale.PhraseLocale;
 import com.freenow.apis.phrase.domainobject.locale.PhraseProject;
 import com.freenow.apis.phrase.exception.PhraseAppApiException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -98,6 +100,44 @@ public class PhraseAppSyncTask implements Runnable
         branchesString = Joiner.on(",").join(branches);
         this.fileService = fileService;
         LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
+    }
+
+    /**
+     * Constructs a new PhraseAppSyncTask by parsing a base URL of the Phrase API and setting Auth Token, Project and
+     * Branches.
+     *
+     * @param authToken Phrase auth token
+     * @param projectId ID of the project in Phrase
+     * @param branches List of branches in Phrase to query
+     * @param baseURL Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
+     * @throws URISyntaxException If parsing of {@code baseURL} fails
+     */
+    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, final String baseURL) throws URISyntaxException
+    {
+        URI uri = new URI(baseURL);
+        String host = baseURL.replace(uri.getScheme() + "://", "");
+        projectIds = Collections.singletonList(projectId);
+        this.branches = branches;
+        localeAPI = new PhraseLocaleAPI(authToken, uri.getScheme(), host);
+        localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, uri.getScheme(), host);
+        projectIdString = Joiner.on(",").join(projectIds);
+        branchesString = Joiner.on(",").join(branches);
+        fileService = new FileService();
+        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
+    }
+
+    /**
+     * Constructs a new PhraseAppSyncTask by parsing a base URL of the Phrase API and setting Auth Token and Project.
+     * Uses the default branch in Phrase.
+     *
+     * @param authToken Phrase auth token
+     * @param projectId ID of the project in Phrase
+     * @param baseURL Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
+     * @throws URISyntaxException If parsing of {@code baseURL} fails
+     */
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String baseURL) throws URISyntaxException
+    {
+        this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), baseURL);
     }
 
 
