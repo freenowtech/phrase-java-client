@@ -13,7 +13,6 @@ import com.freenow.apis.phrase.exception.PhraseAppApiException;
 import com.freenow.apis.phrase.exception.PhraseAppSyncTaskException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.singletonList;
 import static com.freenow.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_FILE_FORMAT;
 import static com.freenow.apis.phrase.api.localedownload.PhraseLocaleDownloadAPI.DEFAULT_BRANCH;
 
@@ -30,6 +30,7 @@ public class PhraseAppSyncTask implements Runnable
 
     // init
     private final List<String> projectIds;
+    private final String tags;
     private final List<String> branches;
     private final PhraseLocaleAPI localeAPI;
     private final PhraseLocaleDownloadAPI localeDownloadAPI;
@@ -51,7 +52,8 @@ public class PhraseAppSyncTask implements Runnable
     {
         // TODO - support for more projectIds but we need to think about how we want to save the message files
         projectIds = Collections.singletonList(projectId);
-        branches = Arrays.asList(DEFAULT_BRANCH);
+        this.tags = null;
+        branches = singletonList(DEFAULT_BRANCH);
         localeAPI = new PhraseLocaleAPI(authToken);
         localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken);
         projectIdString = Joiner.on(",").join(projectIds);
@@ -68,12 +70,27 @@ public class PhraseAppSyncTask implements Runnable
     */
     public PhraseAppSyncTask(final String authToken, final String projectId, final String scheme, final String host)
     {
-        this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), scheme, host);
+        this(authToken, projectId, null, singletonList(DEFAULT_BRANCH), scheme, host);
     }
 
-    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, final String scheme, final String host)
+
+    /**
+     * Constructs a new PhraseAppSyncTask which downloads translation from a project tag.
+     * @param authToken Phrase auth token (optional)
+     * @param projectId ID of the project in Phrase
+     * @param tags List of comma separated tag names of the project in Phrase
+     * @param scheme URL scheme of the Phrase API, e.g. {@code https}
+     * @param host Host of the Phrase API, e.g. {@code api.phraseapp.com}
+     */
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String tags, final String scheme, final String host)
+    {
+        this(authToken, projectId, tags, singletonList(DEFAULT_BRANCH), scheme, host);
+    }
+
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String tags, final List<String> branches, final String scheme, final String host)
     {
         projectIds = Collections.singletonList(projectId);
+        this.tags = tags;
         this.branches = branches;
         localeAPI = new PhraseLocaleAPI(authToken, scheme, host);
         localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
@@ -85,7 +102,7 @@ public class PhraseAppSyncTask implements Runnable
 
     public PhraseAppSyncTask(final String authToken, final String projectId, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI, FileService fileService)
     {
-        this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), localeApi, localeDownloadAPI, fileService);
+        this(authToken, projectId, singletonList(DEFAULT_BRANCH), localeApi, localeDownloadAPI, fileService);
     }
 
     public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI,
@@ -95,6 +112,7 @@ public class PhraseAppSyncTask implements Runnable
         Preconditions.checkNotNull(projectId);
         this.branches = branches;
         this.projectIds = Collections.singletonList(projectId);
+        this.tags = null;
         this.localeAPI = localeApi;
         this.localeDownloadAPI = localeDownloadAPI;
         this.projectIdString = Joiner.on(",").join(projectIds);
@@ -127,6 +145,7 @@ public class PhraseAppSyncTask implements Runnable
 
         String host = baseURL.replace(uri.getScheme() + "://", "");
         projectIds = Collections.singletonList(projectId);
+        this.tags = null;
         this.branches = branches;
         localeAPI = new PhraseLocaleAPI(authToken, uri.getScheme(), host);
         localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, uri.getScheme(), host);
@@ -146,7 +165,7 @@ public class PhraseAppSyncTask implements Runnable
      */
     public PhraseAppSyncTask(final String authToken, final String projectId, final String baseURL)
     {
-        this(authToken, projectId, Arrays.asList(DEFAULT_BRANCH), baseURL);
+        this(authToken, projectId, singletonList(DEFAULT_BRANCH), baseURL);
     }
 
 
@@ -154,7 +173,6 @@ public class PhraseAppSyncTask implements Runnable
     {
         return phraseProjects;
     }
-
 
     @Override
     public void run()
@@ -165,9 +183,9 @@ public class PhraseAppSyncTask implements Runnable
 
             checkAndGetPhraseLocales();
 
-            projectIds.stream()
-                .forEach(projectId -> branches.stream()
-                    .forEach(branch -> updateBranchLocales(projectId, branch)));
+            projectIds
+                .forEach(projectId -> branches
+                    .forEach(branch -> updateBranchLocales(projectId, branch, tags)));
 
             LOG.info("FINISHED Update Messages");
         }
@@ -183,7 +201,7 @@ public class PhraseAppSyncTask implements Runnable
         }
     }
 
-    private void updateBranchLocales(final String projectId, final String branch)
+    private void updateBranchLocales(final String projectId, final String branch, final String tags)
     {
         final List<PhraseLocale> locales = getLocales(projectId, branch);
 
@@ -191,17 +209,16 @@ public class PhraseAppSyncTask implements Runnable
         {
             for (final PhraseLocale locale : locales)
             {
-                updateLocale(projectId, branch, locale);
+                updateLocale(projectId, branch, locale, tags);
             }
         }
     }
 
-
-    private void updateLocale(String projectId, String branch, PhraseLocale locale)
+    private void updateLocale(final String projectId, final String branch, final PhraseLocale locale, final String tags)
     {
         try
         {
-            byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, branch, locale.getId(), format);
+            byte[] translationByteArray = localeDownloadAPI.downloadLocale(projectId, branch, locale.getId(), format, tags);
             if (translationByteArray == null || translationByteArray.length == 0)
             {
                 LOG.warn("Could not receive any data from PhraseAppApi for locale: {}. Please check configuration in PhraseApp!", locale);
@@ -215,7 +232,7 @@ public class PhraseAppSyncTask implements Runnable
         }
     }
 
-    private List<PhraseLocale> getLocales (final String projectId, final String branch)
+    private List<PhraseLocale> getLocales(final String projectId, final String branch)
     {
         final Collection<PhraseProject> phraseProjects =
             Collections2.filter(getPhraseProjects(), phraseProject -> Objects.requireNonNull(phraseProject).getProjectId().equals(projectId));

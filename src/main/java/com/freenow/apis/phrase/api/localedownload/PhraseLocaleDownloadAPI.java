@@ -37,6 +37,8 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
 
     private static final String PARAMETER_BRANCH = "branch";
 
+    private static final String PARAMETER_TAGS = "tags";
+
     private static final String PHRASE_LOCALES_DOWNLOAD_PATH = "/api/v2/projects/" + PLACEHOLDER_PROJECT_ID +
         "/locales/" + PLACEHOLDER_LOCALE_ID + "/download";
 
@@ -62,19 +64,30 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
         super(createRestTemplateWithConverter(), scheme, host, authToken);
     }
 
-
     public byte[] downloadLocale(final String projectId, final String localeId)
     {
-        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, DEFAULT_FILE_FORMAT);
+        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, DEFAULT_FILE_FORMAT, null);
+    }
+
+
+    public byte[] downloadLocale(final String projectId, final String localeId, final String tags)
+    {
+        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, DEFAULT_FILE_FORMAT, tags);
     }
 
 
     public byte[] downloadLocale(final String projectId, final String localeId, final Format format)
     {
-        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, format);
+        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, format, null);
     }
 
-    public byte[] downloadLocale(final String projectId, final String branch, final String localeId, final Format format)
+
+    public byte[] downloadLocale(final String projectId, final String localeId, final Format format, final String tags)
+    {
+        return downloadLocale(projectId, DEFAULT_BRANCH, localeId, format, tags);
+    }
+
+    public byte[] downloadLocale(final String projectId, final String branch, final String localeId, final Format format, final String tags)
     {
         Preconditions.checkNotNull(projectId, "ProjectIds may not be null.");
         Preconditions.checkNotNull(format, "format may not be null.");
@@ -96,15 +109,21 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
                 parameters.add(new BasicNameValuePair(PARAMETER_BRANCH, branch));
             }
 
+            if (tags != null && !tags.trim().isEmpty()) {
+                parameters.add(new BasicNameValuePair(PARAMETER_TAGS, tags));
+            }
+
             final URIBuilder builder = createUriBuilder(requestPath, parameters);
 
-            final HttpEntity<Object> requestEntity = createHttpEntity(requestPath);
+            final String requestPathWithTags = requestPath.concat(getNonNullString(tags));
+
+            final HttpEntity<Object> requestEntity = createHttpEntity(requestPathWithTags);
 
             final URI uri = builder.build();
 
             final ResponseEntity<byte[]> responseEntity = requestPhrase(requestEntity, uri, byte[].class);
 
-            return handleResponse(projectId, requestPath, responseEntity);
+            return handleResponse(projectId, requestPathWithTags, responseEntity);
 
         }
         catch (final URISyntaxException e)
@@ -123,4 +142,8 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
         return createPath(PHRASE_LOCALES_DOWNLOAD_PATH, placeholders);
     }
 
+    private String getNonNullString(final String value) {
+        if (value == null) return "";
+        return value.trim();
+    }
 }
