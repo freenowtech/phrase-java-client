@@ -62,44 +62,6 @@ public class PhraseAppSyncTask implements Runnable
         LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
     }
 
-    /*
-      authToken -
-      projectId -
-      scheme - http or https
-      host - host of api
-    */
-    public PhraseAppSyncTask(final String authToken, final String projectId, final String scheme, final String host)
-    {
-        this(authToken, projectId, null, singletonList(DEFAULT_BRANCH), scheme, host);
-    }
-
-
-    /**
-     * Constructs a new PhraseAppSyncTask which downloads translation from a project tag.
-     * @param authToken Phrase auth token (optional)
-     * @param projectId ID of the project in Phrase
-     * @param tags List of comma separated tag names of the project in Phrase
-     * @param scheme URL scheme of the Phrase API, e.g. {@code https}
-     * @param host Host of the Phrase API, e.g. {@code api.phraseapp.com}
-     */
-    public PhraseAppSyncTask(final String authToken, final String projectId, final String tags, final String scheme, final String host)
-    {
-        this(authToken, projectId, tags, singletonList(DEFAULT_BRANCH), scheme, host);
-    }
-
-    public PhraseAppSyncTask(final String authToken, final String projectId, final String tags, final List<String> branches, final String scheme, final String host)
-    {
-        projectIds = Collections.singletonList(projectId);
-        this.tags = tags;
-        this.branches = branches;
-        localeAPI = new PhraseLocaleAPI(authToken, scheme, host);
-        localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
-        projectIdString = Joiner.on(",").join(projectIds);
-        branchesString = Joiner.on(",").join(branches);
-        fileService = new FileService();
-        LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
-    }
-
     public PhraseAppSyncTask(final String authToken, final String projectId, PhraseLocaleAPI localeApi, PhraseLocaleDownloadAPI localeDownloadAPI, FileService fileService)
     {
         this(authToken, projectId, singletonList(DEFAULT_BRANCH), localeApi, localeDownloadAPI, fileService);
@@ -121,31 +83,37 @@ public class PhraseAppSyncTask implements Runnable
         LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
     }
 
+
     /**
      * Constructs a new PhraseAppSyncTask by parsing a base URL of the Phrase API and setting Auth Token, Project and
      * Branches.
      *
      * @param authToken Phrase auth token
      * @param projectId ID of the project in Phrase
-     * @param branches List of branches in Phrase to query
-     * @param baseURL Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
+     * @param tags      List of comma separated tag names of the project in Phrase
+     * @param branches  List of branches in Phrase to query
+     * @param baseURL   Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
      */
-    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, final String baseURL)
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String tags, final List<String> branches, final String baseURL)
     {
         URI uri;
-        try {
+        try
+        {
             uri = new URI(baseURL);
-        } catch (NullPointerException | URISyntaxException e) {
+        }
+        catch (NullPointerException | URISyntaxException e)
+        {
             throw new PhraseAppSyncTaskException("Parsing base URL failed", e);
         }
 
-        if (!uri.getScheme().equals("http") && !uri.getScheme().equals("https")) {
-            throw new PhraseAppSyncTaskException("Expect scheme in base URL to be 'http' or 'https', was '"+ uri.getScheme() +"'");
+        if (!uri.getScheme().equals("http") && !uri.getScheme().equals("https"))
+        {
+            throw new PhraseAppSyncTaskException("Expect scheme in base URL to be 'http' or 'https', was '" + uri.getScheme() + "'");
         }
 
         String host = baseURL.replace(uri.getScheme() + "://", "");
         projectIds = Collections.singletonList(projectId);
-        this.tags = null;
+        this.tags = tags;
         this.branches = branches;
         localeAPI = new PhraseLocaleAPI(authToken, uri.getScheme(), host);
         localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, uri.getScheme(), host);
@@ -155,19 +123,49 @@ public class PhraseAppSyncTask implements Runnable
         LOG.debug("Initialized PhraseAppSyncTask with following projectIds: " + projectIdString + " and branches: " + branchesString);
     }
 
+
+    /**
+     * Constructs a new PhraseAppSyncTask by parsing a base URL of the Phrase API and setting Auth Token, Project and
+     * Branches.
+     *
+     * @param authToken Phrase auth token
+     * @param projectId ID of the project in Phrase
+     * @param branches  List of branches in Phrase to query
+     * @param baseURL   Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
+     */
+    public PhraseAppSyncTask(final String authToken, final String projectId, final List<String> branches, final String baseURL)
+    {
+        this(authToken, projectId, null, branches, baseURL);
+    }
+
+
     /**
      * Constructs a new PhraseAppSyncTask by parsing a base URL of the Phrase API and setting Auth Token and Project.
      * Uses the default branch in Phrase.
      *
      * @param authToken Phrase auth token
      * @param projectId ID of the project in Phrase
-     * @param baseURL Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
+     * @param baseURL   Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
      */
     public PhraseAppSyncTask(final String authToken, final String projectId, final String baseURL)
     {
-        this(authToken, projectId, singletonList(DEFAULT_BRANCH), baseURL);
+        this(authToken, projectId, null, singletonList(DEFAULT_BRANCH), baseURL);
     }
 
+
+    /**
+     * Constructs a new PhraseAppSyncTask by parsing a base URL of the Phrase API and setting Auth Token and Project.
+     * Uses the default branch in Phrase.
+     *
+     * @param authToken Phrase auth token
+     * @param tags      List of comma separated tag names of the project in Phrase
+     * @param projectId ID of the project in Phrase
+     * @param baseURL   Base URL of the Phrase API, e.g. {@code https://api.phraseapp.com}
+     */
+    public PhraseAppSyncTask(final String authToken, final String projectId, final String tags, final String baseURL)
+    {
+        this(authToken, projectId, tags, singletonList(DEFAULT_BRANCH), baseURL);
+    }
 
     List<PhraseProject> getPhraseProjects()
     {
