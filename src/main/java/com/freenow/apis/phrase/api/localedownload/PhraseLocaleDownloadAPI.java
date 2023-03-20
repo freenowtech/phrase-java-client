@@ -115,15 +115,15 @@ public class PhraseLocaleDownloadAPI extends GenericPhraseAPI<byte[]>
 
             final URIBuilder builder = createUriBuilder(requestPath, parameters);
 
-            final String requestPathWithTags = requestPath.concat(getNonNullString(tags));
+            final String requestPathEtagCacheKey = requestPath.concat(getNonNullString(tags));
 
-            final HttpEntity<Object> requestEntity = createHttpEntity(requestPathWithTags);
+            final HttpEntity<Object> requestEntity = createHttpEntity(requestPathEtagCacheKey);
 
             final URI uri = builder.build();
 
             final ResponseEntity<byte[]> responseEntity = requestPhrase(requestEntity, uri, byte[].class);
 
-            return handleResponse(projectId, requestPathWithTags, responseEntity);
+            return handleResponse(projectId, requestPathEtagCacheKey, responseEntity);
 
         }
         catch (final URISyntaxException e)
