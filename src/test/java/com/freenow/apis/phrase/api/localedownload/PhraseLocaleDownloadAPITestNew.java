@@ -4,7 +4,6 @@ import com.freenow.apis.phrase.api.format.Format;
 import com.freenow.apis.phrase.api.format.JavaPropertiesFormat;
 import com.freenow.apis.phrase.config.TestConfig;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
@@ -71,7 +70,7 @@ public class PhraseLocaleDownloadAPITestNew
             .build();
 
         // WHEN
-        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, branches.get(0), localeIdDe, format);
+        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, branches.get(0), localeIdDe, format, null);
 
         // THEN
         assertNotNull(fileBytes);

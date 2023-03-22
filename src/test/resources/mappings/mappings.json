@@ -21,6 +21,13 @@
         "queryParameters": {
           "file_format": {
             "equalTo": "properties"
+          },
+          "tags" : {
+            "or": [{
+              "equalTo" : "tag-1234"
+            }, {
+              "absent": true
+            }]
           }
         },
         "method": "GET"
@@ -67,6 +74,20 @@
       "response": {
         "status": 200,
         "bodyFileName": "get-translations-res.json",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "name": "Get details and progress information on a single tag for a given project",
+      "request": {
+        "url": "/api/v2/projects/proj-1234/tags/tag-1234",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "bodyFileName": "get-single-tag.json",
         "headers": {
           "Content-Type": "application/json"
         }

@@ -1,0 +1,47 @@
+{
+  "name": "tag-1234",
+  "keys_count": 100,
+  "created_at": "2023-03-09T13:17:40Z",
+  "updated_at": "2023-03-09T13:17:40Z",
+  "statistics": [
+    {
+      "locale": {
+        "id": "locale-1234-en",
+        "name": "EN_Source",
+        "code": "en",
+        "statistics": {
+          "keys_total_count": 100,
+          "translations_completed_count": 100,
+          "translations_unverified_count": 0,
+          "keys_untranslated_count": 0
+        }
+      }
+    },
+    {
+      "locale": {
+        "id": "locale-1234-de",
+        "name": "de-DE",
+        "code": "de-DE",
+        "statistics": {
+          "keys_total_count": 100,
+          "translations_completed_count": 90,
+          "translations_unverified_count": 0,
+          "keys_untranslated_count": 10
+        }
+      }
+    },
+    {
+      "locale": {
+        "id": "locale-1234-es",
+        "name": "ES",
+        "code": "es",
+        "statistics": {
+          "keys_total_count": 100,
+          "translations_completed_count": 90,
+          "translations_unverified_count": 0,
+          "keys_untranslated_count": 10
+        }
+      }
+    }
+  ]
+}

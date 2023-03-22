@@ -4,7 +4,10 @@ import com.freenow.apis.phrase.api.format.Format;
 import com.freenow.apis.phrase.api.format.JavaPropertiesFormat;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.freenow.apis.phrase.config.TestConfig;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.Before;
 import org.junit.Rule;
@@ -112,9 +115,34 @@ public class PhraseLocaleDownloadAPITest
             .build();
 
         // WHEN
-        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, branches.get(0), localeIdDe, format);
+        byte[] fileBytes = localeDownloadAPI.downloadLocale(projectId, branches.get(0), localeIdDe, format, null);
 
         // THEN
         assertNotNull(fileBytes);
+    }
+
+    @Test
+    public void testDownloadLocaleFilterByTags() throws IOException
+    {
+        // GIVEN
+        String authToken = cfg.authToken();
+        String projectId = cfg.projectId();
+        String scheme = cfg.scheme();
+        String host = cfg.host();
+        String tagName = cfg.tags();
+        String locale = cfg.localeIdDe();
+
+        PhraseLocaleDownloadAPI localeDownloadAPI = new PhraseLocaleDownloadAPI(authToken, scheme, host);
+
+        // WHEN
+        byte[] fileBytes = localeDownloadAPI.downloadLocale(
+            projectId,
+            locale,
+            tagName
+        );
+
+        // THEN
+        Properties properties = new Properties();
+        properties.load(new ByteArrayInputStream(fileBytes));
     }
 }

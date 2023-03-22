@@ -25,4 +25,7 @@ public interface TestConfig extends Config
 
     @DefaultValue("http")
     String scheme();
+
+    @DefaultValue("tag-1234")
+    String tags();
 }
